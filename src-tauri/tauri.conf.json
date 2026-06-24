@@ -24,7 +24,7 @@
   "bundle": {
     "publisher": "CN=3462EF1E-6157-41BC-941F-AA5998327B51",
     "active": true,
-    "targets": ["msix"],
+    "targets": ["nsis"],
     "windows": {
       "webviewInstallMode": {
         "type": "offlineInstaller"
