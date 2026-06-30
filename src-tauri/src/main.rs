@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    gmeet_manager_app_lib::run()
+    gmeet_desktop_launcher_lib::run()
 }

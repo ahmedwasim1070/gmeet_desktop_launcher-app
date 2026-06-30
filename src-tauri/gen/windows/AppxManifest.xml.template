@@ -8,7 +8,7 @@
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
 
   <Identity
-    Name="{{PACKAGE_NAME}}"
+    Name="ideaforge.G-MeetDesktopLauncher"
     Publisher="{{PUBLISHER}}"
     Version="{{VERSION}}"
     ProcessorArchitecture="{{ARCH}}" />
