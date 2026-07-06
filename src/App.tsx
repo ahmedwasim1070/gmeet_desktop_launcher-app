@@ -1,99 +1,212 @@
 // Imports
-import { useEffect, useState } from "react";
-import { Toaster } from "react-hot-toast";
-import { requestPermission } from "@tauri-apps/plugin-notification";
-// Stylesheets
-import "./styles/index.css";
-// Pages
-import Home from "./components/pages/Home";
+import { useCallback, useEffect, useState } from "react";
+import {
+	requestPermission,
+	sendNotification,
+} from "@tauri-apps/plugin-notification";
+import type { ScheduleMeeting } from "./types";
 // Components
-import PaymentPop from "./components/layout/PaymentPop";
-import Header from "./components/layout/Header";
-import Navbar from "./components/layout/Navbar";
-import Background from "./components/pages/Background";
-import PrivacyPolicy from "./components/pages/PrivacyPolicy";
-import TermsOfService from "./components/pages/TermsOfService";
-import ContactUs from "./components/pages/ContactUs";
-import RateUs from "./components/pages/RateUs";
+import { PrimaryBox } from "./components/ui/PrimaryBox";
+import { GreetingsCard } from "./components/GreetingsCard";
+import { CreateMeetingCard } from "./components/CreateMeetingCard";
+import { JoinMeetingCard } from "./components/JoinMeetingCard";
+import { ScheduledMeetingBox } from "./components/ScheduledMeetingBox";
+// !
+import PaymentPop from "./components/PaymentPop";
+import ScheduleNotficationPop from "./components/ScheduleNotficationPop";
+import MeetingUrlPop from "./components/MeetingUrlPop";
+import ScheduleMeetingPop from "./components/ScheduleMeetingPop";
+import useClipboardGmeetWatcher from "./hooks/useClipboardGmeetWatcher";
+import ComingSoon from "./components/ComingSoon";
+import { BackgroundList } from "./components/BackgroundList";
 
-//
 function App() {
-  // States
-  // Windows Notification Permission
-  const [notificationPermission, setNotificationPermission] = useState<
-    boolean | null
-  >(() => {
-    const stored = localStorage.getItem("notificationPermission");
-    return stored ? JSON.parse(stored) : null;
-  });
-  // Nav Expanded
-  const [isExpnadedNav, setIsExpandedNav] = useState<boolean>(false);
-  // Selected Tab
-  const [selectedTab, setSelectedTab] = useState<string>("home");
-  // Payment Option Pop State
-  const [isPaymentPop, setIsPaymentPop] = useState<boolean>(false);
+	// States
+	const [notificationPermission, setNotificationPermission] = useState<
+		boolean | null
+	>(() => {
+		const stored = localStorage.getItem("notificationPermission");
+		return stored ? JSON.parse(stored) : null;
+	});
+	const [isPaymentPop, setIsPaymentPop] = useState<boolean>(false);
+	// Machine readable time
+	const [currentTime, setCurrentTime] = useState<Date>(new Date());
+	// Human readable time
+	const [formattedDate, setFormattedDate] = useState<string>(() =>
+		new Date().toLocaleDateString("en-US", {
+			weekday: "long",
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		}),
+	);
+	// Meeting Url from clipboard
+	const [clipMeetingUrl, setClipMeetingUrl] = useState<URL | null>(null);
+	// Meeting Url Popup
+	const [isMeetingPop, setIsMeetingPop] = useState<boolean>(false);
+	// Schedule Meeting pop
+	const [isScheduleMeetingPop, setIsScheduleMeetingPop] =
+		useState<boolean>(false);
+	// Scheduled Meetings
+	const [scheduledMeetings, setScheduledMeetings] = useState<ScheduleMeeting[]>(
+		() => {
+			const stored = localStorage.getItem("scheduledMeetings");
+			const meetings: ScheduleMeeting[] = stored ? JSON.parse(stored) : [];
+			if (meetings.length > 0) {
+				const cleanedInvalidMeetings = meetings.filter(
+					(meeting) => meeting.date > Date.now(),
+				);
+				return cleanedInvalidMeetings;
+			} else {
+				return meetings;
+			}
+		},
+	);
+	// Next Notification
+	const [scheduleNotification, setScheduleNotification] =
+		useState<ScheduleMeeting | null>(null);
+	// Notify Pop
+	const [isScheduleNotifyPop, setIsScheduleNotifyPop] =
+		useState<boolean>(false);
 
-  // Effect
-  // Check for notification permission
-  useEffect(() => {
-    async function checkPermission() {
-      if (notificationPermission === null) {
-        const ask = await requestPermission();
-        setNotificationPermission(ask === "granted");
-      }
-    }
+	// clipboardWatcher Hook that looks for google meet urls
+	const handleClipboard = useCallback((text: URL) => {
+		if (text) {
+			setIsMeetingPop(true);
+			setClipMeetingUrl(text);
+		}
+	}, []);
+	useClipboardGmeetWatcher(handleClipboard);
 
-    checkPermission();
-  }, [notificationPermission]);
-  // Save
-  useEffect(() => {
-    if (notificationPermission !== null) {
-      localStorage.setItem(
-        "notificationPermission",
-        JSON.stringify(notificationPermission),
-      );
-    }
-  }, [notificationPermission]);
+	// Effects
+	useEffect(() => {
+		async function checkPermission() {
+			if (notificationPermission === null) {
+				const ask = await requestPermission();
+				setNotificationPermission(ask === "granted");
+			}
+		}
+		checkPermission();
+	}, [notificationPermission]);
+	//
+	useEffect(() => {
+		if (notificationPermission !== null) {
+			localStorage.setItem(
+				"notificationPermission",
+				JSON.stringify(notificationPermission),
+			);
+		}
+	}, [notificationPermission]);
+	// Update time and data
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const now = Date.now();
 
-  return (
-    <section className="relative">
-      <Toaster />
+			setCurrentTime(new Date(now));
 
-      {/* Payment Pop */}
-      {isPaymentPop && <PaymentPop setIsPaymentPop={setIsPaymentPop} />}
+			const newFormattedDate = new Date(now).toLocaleDateString("en-US", {
+				weekday: "long",
+				year: "numeric",
+				month: "long",
+				day: "numeric",
+			});
 
-      {/*  */}
-      <Header
-        isExpnadedNav={isExpnadedNav}
-        setIsExpandedNav={setIsExpandedNav}
-      />
+			setFormattedDate((prev) =>
+				prev !== newFormattedDate ? newFormattedDate : prev,
+			);
+		}, 1000);
 
-      {/*  */}
-      <Navbar
-        isExpnadedNav={isExpnadedNav}
-        selectedTab={selectedTab}
-        setSelectedTab={setSelectedTab}
-      />
+		return () => clearInterval(interval);
+	}, []);
+	// Check for schedule reminder
+	useEffect(() => {
+		if (
+			scheduleNotification &&
+			Math.abs(scheduleNotification.date - currentTime.getTime()) < 1000
+		) {
+			setIsScheduleNotifyPop(true);
 
-      {/*  */}
-      <main className={`mt-16 ${isExpnadedNav ? "ml-[22%]" : "ml-16"}`}>
-        {/* Home */}
-        {selectedTab === "home" && (
-          <Home notificationPermission={notificationPermission} />
-        )}
-        {/* Background */}
-        {selectedTab === "background" && <Background />}
-        {/* Privacy Policy */}
-        {selectedTab === "privacy-policy" && <PrivacyPolicy />}
-        {/* Terms Of Service */}
-        {selectedTab === "terms-of-service" && <TermsOfService />}
-        {/* Contact Us */}
-        {selectedTab === "contact-us" && <ContactUs />}
-        {/* Contact Us */}
-        {selectedTab === "rate-us" && <RateUs />}
-      </main>
-    </section>
-  );
+			if (notificationPermission === true) {
+				sendNotification({
+					title: "Meeting Reminder",
+					body: `You have a Scheduled Meeting`,
+				});
+			}
+		}
+
+		if (!scheduleNotification && scheduledMeetings.length > 0) {
+			const sorted = [...scheduledMeetings].sort((a, b) => a.date - b.date);
+			setScheduleNotification(sorted[0]);
+		}
+	}, [
+		currentTime,
+		scheduledMeetings,
+		scheduleNotification,
+		notificationPermission,
+	]);
+	// ScheduleMeeting
+	useEffect(() => {
+		if (scheduledMeetings) {
+			localStorage.setItem(
+				"scheduleMeetings",
+				JSON.stringify(scheduledMeetings),
+			);
+		}
+	}, [scheduledMeetings]);
+
+	return (
+		<section id="App" className="space-y-4 mt-10 p-4">
+			{/* Popups */}
+			{/*  */}
+			{isPaymentPop && <PaymentPop setIsPaymentPop={setIsPaymentPop} />}
+			{/* Schedule Notification Pop */}
+			{isScheduleNotifyPop && scheduleNotification && (
+				<ScheduleNotficationPop
+					setIsScheduleNotifyPop={setIsScheduleNotifyPop}
+					scheduleNotification={scheduleNotification}
+					setScheduleNotification={setScheduleNotification}
+					setScheduledMeetings={setScheduledMeetings}
+				/>
+			)}
+			{/* Meeting Url */}
+			{isMeetingPop && (
+				<MeetingUrlPop
+					clipMeetingUrl={clipMeetingUrl}
+					setClipMeetingUrl={setClipMeetingUrl}
+					setIsMeetingPop={setIsMeetingPop}
+				/>
+			)}
+			{/* Schedule Meeting */}
+			{isScheduleMeetingPop && (
+				<ScheduleMeetingPop
+					currentTime={currentTime}
+					setIsScheduleMeetingPop={setIsScheduleMeetingPop}
+					scheduledMeetings={scheduledMeetings}
+					setScheduledMeetings={setScheduledMeetings}
+				/>
+			)}
+
+			{/* Greetings */}
+			<PrimaryBox Child={<GreetingsCard formattedDate={formattedDate} />} />
+
+			{/*  */}
+			<div className="flex flex-row gap-x-4">
+				<PrimaryBox Child={<CreateMeetingCard />} className="flex-1" />
+				<PrimaryBox Child={<JoinMeetingCard />} className="flex-1" />
+			</div>
+
+			{/* Upcoming Meetings */}
+			<ScheduledMeetingBox
+				currentTime={currentTime}
+				setIsScheduleMeetingPop={setIsScheduleMeetingPop}
+				scheduledMeetings={scheduledMeetings}
+				setScheduledMeetings={setScheduledMeetings}
+			/>
+
+			{/* Backgrounds */}
+			<BackgroundList />
+		</section>
+	);
 }
 
 export default App;

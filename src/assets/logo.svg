@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Master clip to force a perfect modern border-to-border squircle -->
+    <clipPath id="squircle">
+      <rect width="512" height="512" rx="140" fill="#fff" />
+    </clipPath>
+    
+    <!-- Soft 3D shadow for the central white camera icon -->
+    <filter id="drop-shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Background Asset Group clipped to exact edge boundaries -->
+  <g clip-path="url(#squircle)">
+    <!-- Base Layer: Yellow (Bottom Left) -->
+    <rect width="512" height="512" fill="#FBBC05" />
+    
+    <!-- Layer 2: Green (Top) -->
+    <path d="M-10,-10 H522 V160 C380,120 200,240 -10,190 Z" fill="#34A853" />
+    
+    <!-- Layer 3: Blue (Top Right) -->
+    <path d="M522,-10 V320 C420,310 320,180 260,-10 Z" fill="#4285F4" />
+    
+    <!-- Layer 4: Red (Bottom Right) -->
+    <path d="M522,522 H110 C220,380 400,340 522,300 Z" fill="#EA4335" />
+  </g>
+
+  <!-- Foreground Central Elements with clean spacing and soft dimensions -->
+  <g filter="url(#drop-shadow)">
+    <!-- Main Camera Body Rounded Rect -->
+    <rect x="115" y="166" width="200" height="180" rx="45" fill="#FFFFFF" />
+    
+    <!-- Camera Lens Cone with the distinct dynamic spacing groove -->
+    <path d="M340,210 L390,178 C402,170 412,176 412,190 V322 C412,336 402,342 390,334 L340,302 C332,297 332,285 332,280 V232 C332,227 332,215 340,210 Z" fill="#FFFFFF" />
+  </g>
+</svg>

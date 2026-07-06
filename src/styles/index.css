@@ -1,13 +1,78 @@
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
+
 @import "tailwindcss";
 
-body {
-  background-color: #e5e7eb;
+@theme {
+  /* Backgrounds & Surfaces */
+  --color-bg-base: #eef0f8;
+  --color-bg-surface: #ffffff;
+  --color-bg-elevated: #fefeff;
+  /* Border */
+  --color-border: #737373;
+  /* Text */
+  --color-text-primary: #000000;
+  --color-text-muted: #737373;
+  /* Brand Accents */
+  --color-brand-blue: #004aad;
 }
 
-.scrollbar-hidden {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/*  */
+@layer base {
+  body {
+    /*  */
+    font-family: 'Roboto', system-ui, sans-serif;
+    line-height: 1.5; 
+    /*  */
+    background-color: var(--color-bg-base);
+    color: var(--color-text-primary);
+    /*  */
+    user-select: none;
+  }
 }
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
+
+/*  */
+@layer components {
+  /* Chrome, Edge, Safari */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Firefox */
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+  /* IE/Old Edge */
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+  }
+
+  .primary-button {
+    color: white;
+    background-color: var(--color-brand-blue); /* Replace with your brand blue */
+    padding: 0.5rem 1.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition:
+      background-color 200ms,
+      color 200ms,
+      border-color 200ms;
+  }
+  .primary-button:hover {
+    background-color: var(--color-blue-500);
+  }
+  .primary-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hidden {
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+  }
 }

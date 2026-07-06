@@ -14,8 +14,8 @@ function ComingSoon() {
         <div className="text-center space-y-2">
           <h2 className="text-xl font-bold text-gray-800">Coming Soon</h2>
           <p className="text-sm text-gray-600 max-w-sm mx-auto">
-            We are currently working hard on this feature. It will be available
-            in a future update!
+            We are currently working on backgrounds. It will be available in a
+            future update!
           </p>
         </div>
 

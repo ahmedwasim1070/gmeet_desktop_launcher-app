@@ -11,13 +11,14 @@
     "tauri:windows:build": "tauri-windows-bundle build"
   },
   "dependencies": {
+    "@fontsource/roboto": "^5.2.10",
+    "@tauri-apps/api": "^2.11.1",
     "@tauri-apps/plugin-clipboard-manager": "^2.3.0",
     "@tauri-apps/plugin-notification": "^2.3.1",
     "@tauri-apps/plugin-opener": "^2.5.0",
     "lucide-react": "^0.542.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "react-hot-toast": "^2.6.0"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@choochmeque/tauri-windows-bundle": "^0.1.26",
