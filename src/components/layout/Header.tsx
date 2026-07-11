@@ -1,15 +1,13 @@
 // Imports
-import { Dispatch, SetStateAction } from "react";
 import { PremiumStatusButton } from "../premium/PremiumStatusButton";
 import { SettingsButton } from "../settings/SettingsButton";
-
-// Interface
-interface HeaderProps {
-	setIsSettingsOpen: Dispatch<SetStateAction<boolean>>;
-}
+import { UseApp } from "../../providers/AppProvider";
 
 //
-export const Header = ({ setIsSettingsOpen }: HeaderProps) => {
+export const Header = () => {
+	// providers
+	const {setIsSettingsOpen} = UseApp();
+
 	return (
 		<section className="flex flex-row items-center justify-between mb-4">
 			<PremiumStatusButton />

@@ -14,8 +14,8 @@ import type { PremiumLicense, PremiumPlanCode } from "../types";
 // Add-on Store IDs from Partner Center (Task.md → Phase 1).
 // Replace the placeholders once the add-ons are created.
 const STORE_ADDON_IDS: Record<PremiumPlanCode, string> = {
-  annual: "TODO_PARTNER_CENTER_ANNUAL_ADDON_STORE_ID",
-  lifetime: "TODO_PARTNER_CENTER_LIFETIME_ADDON_STORE_ID",
+  annual: "GMeetDesktopLauncherAnnual",
+  lifetime: "GMeetDesktopLauncherLifetime",
 };
 
 const FREE_LICENSE: PremiumLicense = { isPremium: false, plan: "free" };

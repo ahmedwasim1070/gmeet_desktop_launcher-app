@@ -1,14 +1,12 @@
 // Imports
 import { useState, useEffect } from "react";
 import { Edit } from "lucide-react";
+import { useTime } from "../../providers/TimeProvider";
 
-// Interface
-interface GreetingsCardProps {
-	formattedDate: string;
-}
-
-// Greeting header with the editable user name, upgrade action and settings
-export const GreetingsCard = ({ formattedDate }: GreetingsCardProps) => {
+//
+export const GreetingsCard = () => {
+	// Provider
+	const {formattedDate} = useTime();
 	// States
 	// User Name
 	const [userName, setUserName] = useState<string>(() => {

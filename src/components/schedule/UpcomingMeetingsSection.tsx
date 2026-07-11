@@ -1,28 +1,27 @@
 // Imports
 import { useRef } from "react";
 import { Plus } from "lucide-react";
-import type { ScheduledMeeting } from "../../types";
 import { DraggableScrollList } from "../ui/DraggableScrollList";
 import { ScrollButtons } from "../ui/ScrollButtons";
 import { ActionIconButton } from "../ui/ActionIconButton";
 import { NoMeetingsPlaceholder } from "./NoMeetingsPlaceholder";
 import { ScheduledMeetingCard } from "./ScheduledMeetingCard";
+import { useTime } from "../../providers/TimeProvider";
+import { UseApp } from "../../providers/AppProvider";
 
 // Interface
 interface UpcomingMeetingsSectionProps {
-	currentTime: Date;
-	scheduledMeetings: ScheduledMeeting[];
-	setScheduledMeetings: React.Dispatch<React.SetStateAction<ScheduledMeeting[]>>;
 	onScheduleNew: () => void;
 }
 
 // Horizontal list of upcoming scheduled meetings with a "Schedule New" action
 export const UpcomingMeetingsSection = ({
-	currentTime,
-	scheduledMeetings,
-	setScheduledMeetings,
 	onScheduleNew,
 }: UpcomingMeetingsSectionProps) => {
+	// Providers
+	const {currentTime} = useTime();
+	const {scheduledMeetings,setScheduledMeetings} = UseApp();
+	//
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const hasMeetings = scheduledMeetings.length > 0;
 

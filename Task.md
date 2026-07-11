@@ -119,3 +119,15 @@ Use `usePremiumServices().isPremium` to gate:
 - `StoreContext` in desktop (Win32/MSIX) apps + `IInitializeWithWindow`: <https://learn.microsoft.com/windows/apps/develop/windows-integration/use-store-context-desktop>
 - Add-on submission in Partner Center: <https://learn.microsoft.com/windows/apps/publish/publish-your-app/add-on/create-app-submission>
 - `windows` crate docs (`Services::Store`): <https://microsoft.github.io/windows-docs-rs/doc/windows/Services/Store/>
+
+
+https://sites.google.com/view/ideaforge-web/home
+https://sites.google.com/view/ideaforge-web/support
+
+
+-- Premium Screen !
+-- .css - scroll bar ! 
+	<main className="app-scroll flex-1">
+		{/* ...rest of AppContent */}
+	</main>
+-- Popup : settings & Schedule a meeting Pop

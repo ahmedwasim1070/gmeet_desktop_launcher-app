@@ -9,40 +9,65 @@
   --color-bg-base: #eef0f8;
   --color-bg-surface: #ffffff;
   --color-bg-elevated: #fefeff;
+
   /* Border */
   --color-border: #737373;
+
   /* Text */
   --color-text-primary: #000000;
   --color-text-muted: #737373;
+
   /* Brand Accents */
   --color-brand-blue: #004aad;
+  --color-brand-blue-hover: #0a58c4;
+
+  /* Scrollbar */
+  --color-scroll-thumb: #c4c9d9;
+  --color-scroll-thumb-hover: #a9afc4;
 }
 
 /*  */
 @layer base {
+  /* App shell: never scroll the window itself */
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    overflow: hidden; /* the window never scrolls — inner panels do */
+  }
+
+  /* Desktop app feel, not a webpage */
   body {
-    /*  */
-    font-family: 'Roboto', system-ui, sans-serif;
-    line-height: 1.5; 
-    /*  */
+    font-family: "Roboto", system-ui, sans-serif;
+    line-height: 1.5;
     background-color: var(--color-bg-base);
     color: var(--color-text-primary);
-    /*  */
-    user-select: none;
+    overscroll-behavior: none; /* no rubber-band / scroll chaining */
+    user-select: none; /* text isn't selectable like a webpage */
+    cursor: default; /* no text I-beam everywhere */
+  }
+
+  /* Re-enable selection where it makes sense */
+  textarea,
+  [contenteditable="true"] {
+    user-select: text;
+    cursor: text;
   }
 }
 
 /*  */
 @layer components {
-  .primary-box{
+  .primary-box {
     padding: calc(var(--spacing) * 4);
     background-color: var(--color-bg-surface);
-    border-radius: var(--radius-lg)
+    border-radius: var(--radius-lg);
   }
 
   .primary-button {
     color: white;
-    background-color: var(--color-brand-blue); /* Replace with your brand blue */
+    background-color: var(--color-brand-blue);
     padding: 0.5rem 1.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
@@ -52,7 +77,7 @@
       border-color 200ms;
   }
   .primary-button:hover {
-    background-color: var(--color-blue-500);
+    background-color: var(--color-brand-blue-hover);
   }
   .primary-button:disabled {
     opacity: 0.5;
@@ -60,12 +85,38 @@
   }
 }
 
+/*  */
 @layer utilities {
+  /* Designated scroll region with a slim custom scrollbar */
+  .app-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin; /* Firefox fallback, harmless in WebView2 */
+    scrollbar-color: var(--color-scroll-thumb) transparent;
+  }
+  .app-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .app-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .app-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-scroll-thumb);
+    border-radius: 9999px;
+  }
+  .app-scroll::-webkit-scrollbar-thumb:hover {
+    background: var(--color-scroll-thumb-hover);
+  }
+  .app-scroll::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  /* Scrolls with no visible bar at all */
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
-  }
-  .scrollbar-hidden {
-    -ms-overflow-style: none; 
-    scrollbar-width: none; 
   }
 }

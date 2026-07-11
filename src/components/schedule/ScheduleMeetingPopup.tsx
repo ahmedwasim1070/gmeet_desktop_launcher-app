@@ -1,26 +1,23 @@
 // Imports
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ScheduledMeeting } from "../../types";
 import { CloseButton } from "../ui/CloseButton";
+import { useTime } from "../../providers/TimeProvider";
+import { UseApp } from "../../providers/AppProvider";
+import { Popup } from "../ui/Popup";
 
 // Interfaces
 interface ScheduleMeetingPopupProps {
-	currentTime: Date;
-	scheduledMeetings: ScheduledMeeting[];
-	setScheduledMeetings: React.Dispatch<
-		React.SetStateAction<ScheduledMeeting[]>
-	>;
 	onClose: () => void;
 }
 
 // Popup with a calendar to schedule a meeting within the next 30 days
-export function ScheduleMeetingPopup({
-	currentTime,
-	scheduledMeetings,
-	setScheduledMeetings,
-	onClose,
-}: ScheduleMeetingPopupProps) {
+export function ScheduleMeetingPopup({onClose}:ScheduleMeetingPopupProps) {
+	// Provider
+	const {currentTime} = useTime();
+	const { scheduledMeetings,setScheduledMeetings} = UseApp();
+
 	// States
 	const [selectedDate, setSelectedDate] = useState<Date | null>(currentTime);
 	const [selectedTime, setSelectedTime] = useState("09:00");
@@ -244,17 +241,7 @@ export function ScheduleMeetingPopup({
 	];
 
 	return (
-		<section
-			onClick={onClose}
-			className="inset-0 fixed z-40 min-w-screen h-full bg-text-primary/30 flex justify-center items-center"
-		>
-			<div
-				onClick={(e) => e.stopPropagation()}
-				className="bg-bg-surface shadow-sm rounded-lg w-[440px] max-h-[90vh] overflow-y-auto hide-scrollbar relative flex flex-col p-6 gap-y-1"
-			>
-				{/* Close btn */}
-				<CloseButton onClick={onClose} />
-
+		<Popup onClose={onClose} className="gap-y-1">
 				<div className="text-center mb-4">
 					<h2 className="font-semibold text-lg mb-2 text-text-primary">
 						Schedule Meeting
@@ -421,7 +408,6 @@ export function ScheduleMeetingPopup({
 				>
 					Add
 				</button>
-			</div>
-		</section>
+		</Popup>
 	);
 }
