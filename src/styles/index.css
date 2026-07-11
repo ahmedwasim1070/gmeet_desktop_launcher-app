@@ -34,17 +34,10 @@
 
 /*  */
 @layer components {
-  /* Chrome, Edge, Safari */
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  /* Firefox */
-  .hide-scrollbar {
-    scrollbar-width: none;
-  }
-  /* IE/Old Edge */
-  .hide-scrollbar {
-    -ms-overflow-style: none;
+  .primary-box{
+    padding: calc(var(--spacing) * 4);
+    background-color: var(--color-bg-surface);
+    border-radius: var(--radius-lg)
   }
 
   .primary-button {

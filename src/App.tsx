@@ -6,7 +6,7 @@ import {
 } from "@tauri-apps/plugin-notification";
 import type { ScheduledMeeting } from "./types";
 // Services
-import { AppServices } from "./components/services/AppServices";
+import { AppServices } from "./services/AppServices";
 // Components
 import { PrimaryBox } from "./components/ui/PrimaryBox";
 import { GreetingsCard } from "./components/home/GreetingsCard";
@@ -16,16 +16,21 @@ import { UpcomingMeetingsSection } from "./components/schedule/UpcomingMeetingsS
 import { ScheduleMeetingPopup } from "./components/schedule/ScheduleMeetingPopup";
 import { MeetingReminderPopup } from "./components/schedule/MeetingReminderPopup";
 import { BackgroundsSection } from "./components/backgrounds/BackgroundsSection";
+import { Header } from "./components/layout/Header";
+import { SettingsPopup } from "./components/settings/SettingsPopup";
 
+//
 function App() {
 	// States
-	// Notification permission (persisted so we only ask once)
+	//
 	const [hasNotificationPermission, setHasNotificationPermission] = useState<
 		boolean | null
 	>(() => {
 		const stored = localStorage.getItem("notificationPermission");
 		return stored ? JSON.parse(stored) : null;
 	});
+	// Settings Pop
+	const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
 	// Machine readable time
 	const [currentTime, setCurrentTime] = useState<Date>(new Date());
 	// Human readable time
@@ -120,7 +125,10 @@ function App() {
 	}, [currentTime, scheduledMeetings, nextReminder, hasNotificationPermission]);
 	// Persist scheduled meetings
 	useEffect(() => {
-		localStorage.setItem("scheduledMeetings", JSON.stringify(scheduledMeetings));
+		localStorage.setItem(
+			"scheduledMeetings",
+			JSON.stringify(scheduledMeetings),
+		);
 	}, [scheduledMeetings]);
 
 	// Removes the reminded meeting and closes the reminder popup
@@ -154,6 +162,14 @@ function App() {
 						onClose={() => setIsSchedulePopupOpen(false)}
 					/>
 				)}
+
+				{/* Settings Popup */}
+				{isSettingsOpen && (
+					<SettingsPopup onClose={() => setIsSettingsOpen(false)} />
+				)}
+
+				{/* Header */}
+				<Header setIsSettingsOpen={setIsSettingsOpen} />
 
 				{/* Greetings */}
 				<PrimaryBox Child={<GreetingsCard formattedDate={formattedDate} />} />
