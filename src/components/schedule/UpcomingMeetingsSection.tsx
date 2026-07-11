@@ -1,28 +1,28 @@
 // Imports
 import { useRef } from "react";
 import { Plus } from "lucide-react";
-import type { ScheduleMeeting } from "../types";
-import { DraggableScrollList } from "./ui/DraggableScrollList";
-import { ScrollButtons } from "./ui/ScrollButtons";
-import { ActionIconButton } from "./ui/ActionIconButton";
-import { EmptyMeetingWidget } from "./EmptyMeetingWidget";
-import { MeetingCard } from "./MeetingCard";
+import type { ScheduledMeeting } from "../../types";
+import { DraggableScrollList } from "../ui/DraggableScrollList";
+import { ScrollButtons } from "../ui/ScrollButtons";
+import { ActionIconButton } from "../ui/ActionIconButton";
+import { NoMeetingsPlaceholder } from "./NoMeetingsPlaceholder";
+import { ScheduledMeetingCard } from "./ScheduledMeetingCard";
 
-//
-interface ScheduledMeetingBoxProps {
+// Interface
+interface UpcomingMeetingsSectionProps {
 	currentTime: Date;
-	setIsScheduleMeetingPop: React.Dispatch<React.SetStateAction<boolean>>;
-	scheduledMeetings: ScheduleMeeting[];
-	setScheduledMeetings: React.Dispatch<React.SetStateAction<ScheduleMeeting[]>>;
+	scheduledMeetings: ScheduledMeeting[];
+	setScheduledMeetings: React.Dispatch<React.SetStateAction<ScheduledMeeting[]>>;
+	onScheduleNew: () => void;
 }
 
-//
-export const ScheduledMeetingBox = ({
+// Horizontal list of upcoming scheduled meetings with a "Schedule New" action
+export const UpcomingMeetingsSection = ({
 	currentTime,
-	setIsScheduleMeetingPop,
 	scheduledMeetings,
 	setScheduledMeetings,
-}: ScheduledMeetingBoxProps) => {
+	onScheduleNew,
+}: UpcomingMeetingsSectionProps) => {
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 	const hasMeetings = scheduledMeetings.length > 0;
 
@@ -57,7 +57,7 @@ export const ScheduledMeetingBox = ({
 					<ActionIconButton
 						label="Schedule New"
 						icon={<Plus className="w-4 h-4" />}
-						onClick={() => setIsScheduleMeetingPop(true)}
+						onClick={onScheduleNew}
 					/>
 				</div>
 			</div>
@@ -69,7 +69,7 @@ export const ScheduledMeetingBox = ({
 					className="w-full gap-x-5 py-2"
 				>
 					{scheduledMeetings.map((meeting) => (
-						<MeetingCard
+						<ScheduledMeetingCard
 							key={meeting.serial}
 							meeting={meeting}
 							currentTime={currentTime}
@@ -78,7 +78,7 @@ export const ScheduledMeetingBox = ({
 					))}
 				</DraggableScrollList>
 			) : (
-				<EmptyMeetingWidget />
+				<NoMeetingsPlaceholder />
 			)}
 		</section>
 	);

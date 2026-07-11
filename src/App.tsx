@@ -1,34 +1,31 @@
 // Imports
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	requestPermission,
 	sendNotification,
 } from "@tauri-apps/plugin-notification";
-import type { ScheduleMeeting } from "./types";
+import type { ScheduledMeeting } from "./types";
+// Services
+import { AppServices } from "./components/services/AppServices";
 // Components
 import { PrimaryBox } from "./components/ui/PrimaryBox";
-import { GreetingsCard } from "./components/GreetingsCard";
-import { CreateMeetingCard } from "./components/CreateMeetingCard";
-import { JoinMeetingCard } from "./components/JoinMeetingCard";
-import { ScheduledMeetingBox } from "./components/ScheduledMeetingBox";
-// !
-import PaymentPop from "./components/PaymentPop";
-import ScheduleNotficationPop from "./components/ScheduleNotficationPop";
-import MeetingUrlPop from "./components/MeetingUrlPop";
-import ScheduleMeetingPop from "./components/ScheduleMeetingPop";
-import useClipboardGmeetWatcher from "./hooks/useClipboardGmeetWatcher";
-import ComingSoon from "./components/ComingSoon";
-import { BackgroundList } from "./components/BackgroundList";
+import { GreetingsCard } from "./components/home/GreetingsCard";
+import { CreateMeetingCard } from "./components/home/CreateMeetingCard";
+import { JoinMeetingCard } from "./components/home/JoinMeetingCard";
+import { UpcomingMeetingsSection } from "./components/schedule/UpcomingMeetingsSection";
+import { ScheduleMeetingPopup } from "./components/schedule/ScheduleMeetingPopup";
+import { MeetingReminderPopup } from "./components/schedule/MeetingReminderPopup";
+import { BackgroundsSection } from "./components/backgrounds/BackgroundsSection";
 
 function App() {
 	// States
-	const [notificationPermission, setNotificationPermission] = useState<
+	// Notification permission (persisted so we only ask once)
+	const [hasNotificationPermission, setHasNotificationPermission] = useState<
 		boolean | null
 	>(() => {
 		const stored = localStorage.getItem("notificationPermission");
 		return stored ? JSON.parse(stored) : null;
 	});
-	const [isPaymentPop, setIsPaymentPop] = useState<boolean>(false);
 	// Machine readable time
 	const [currentTime, setCurrentTime] = useState<Date>(new Date());
 	// Human readable time
@@ -40,64 +37,46 @@ function App() {
 			day: "numeric",
 		}),
 	);
-	// Meeting Url from clipboard
-	const [clipMeetingUrl, setClipMeetingUrl] = useState<URL | null>(null);
-	// Meeting Url Popup
-	const [isMeetingPop, setIsMeetingPop] = useState<boolean>(false);
-	// Schedule Meeting pop
-	const [isScheduleMeetingPop, setIsScheduleMeetingPop] =
+	// Schedule Meeting popup visibility
+	const [isSchedulePopupOpen, setIsSchedulePopupOpen] =
 		useState<boolean>(false);
-	// Scheduled Meetings
-	const [scheduledMeetings, setScheduledMeetings] = useState<ScheduleMeeting[]>(
-		() => {
-			const stored = localStorage.getItem("scheduledMeetings");
-			const meetings: ScheduleMeeting[] = stored ? JSON.parse(stored) : [];
-			if (meetings.length > 0) {
-				const cleanedInvalidMeetings = meetings.filter(
-					(meeting) => meeting.date > Date.now(),
-				);
-				return cleanedInvalidMeetings;
-			} else {
-				return meetings;
-			}
-		},
+	// Scheduled Meetings (past ones are dropped on load)
+	const [scheduledMeetings, setScheduledMeetings] = useState<
+		ScheduledMeeting[]
+	>(() => {
+		const stored = localStorage.getItem("scheduledMeetings");
+		const meetings: ScheduledMeeting[] = stored ? JSON.parse(stored) : [];
+		return meetings.filter((meeting) => meeting.date > Date.now());
+	});
+	// Next meeting to remind about
+	const [nextReminder, setNextReminder] = useState<ScheduledMeeting | null>(
+		null,
 	);
-	// Next Notification
-	const [scheduleNotification, setScheduleNotification] =
-		useState<ScheduleMeeting | null>(null);
-	// Notify Pop
-	const [isScheduleNotifyPop, setIsScheduleNotifyPop] =
+	// Reminder popup visibility
+	const [isReminderPopupOpen, setIsReminderPopupOpen] =
 		useState<boolean>(false);
-
-	// clipboardWatcher Hook that looks for google meet urls
-	const handleClipboard = useCallback((text: URL) => {
-		if (text) {
-			setIsMeetingPop(true);
-			setClipMeetingUrl(text);
-		}
-	}, []);
-	useClipboardGmeetWatcher(handleClipboard);
 
 	// Effects
+	// Ask for notification permission once
 	useEffect(() => {
 		async function checkPermission() {
-			if (notificationPermission === null) {
+			if (hasNotificationPermission === null) {
 				const ask = await requestPermission();
-				setNotificationPermission(ask === "granted");
+				setHasNotificationPermission(ask === "granted");
 			}
 		}
 		checkPermission();
-	}, [notificationPermission]);
-	//
+	}, [hasNotificationPermission]);
+	// Persist notification permission
 	useEffect(() => {
-		if (notificationPermission !== null) {
+		if (hasNotificationPermission !== null) {
 			localStorage.setItem(
 				"notificationPermission",
-				JSON.stringify(notificationPermission),
+				JSON.stringify(hasNotificationPermission),
 			);
 		}
-	}, [notificationPermission]);
-	// Update time and data
+	}, [hasNotificationPermission]);
+	// Update time and date every second
 	useEffect(() => {
 		const interval = setInterval(() => {
 			const now = Date.now();
@@ -121,12 +100,12 @@ function App() {
 	// Check for schedule reminder
 	useEffect(() => {
 		if (
-			scheduleNotification &&
-			Math.abs(scheduleNotification.date - currentTime.getTime()) < 1000
+			nextReminder &&
+			Math.abs(nextReminder.date - currentTime.getTime()) < 1000
 		) {
-			setIsScheduleNotifyPop(true);
+			setIsReminderPopupOpen(true);
 
-			if (notificationPermission === true) {
+			if (hasNotificationPermission === true) {
 				sendNotification({
 					title: "Meeting Reminder",
 					body: `You have a Scheduled Meeting`,
@@ -134,78 +113,69 @@ function App() {
 			}
 		}
 
-		if (!scheduleNotification && scheduledMeetings.length > 0) {
+		if (!nextReminder && scheduledMeetings.length > 0) {
 			const sorted = [...scheduledMeetings].sort((a, b) => a.date - b.date);
-			setScheduleNotification(sorted[0]);
+			setNextReminder(sorted[0]);
 		}
-	}, [
-		currentTime,
-		scheduledMeetings,
-		scheduleNotification,
-		notificationPermission,
-	]);
-	// ScheduleMeeting
+	}, [currentTime, scheduledMeetings, nextReminder, hasNotificationPermission]);
+	// Persist scheduled meetings
 	useEffect(() => {
-		if (scheduledMeetings) {
-			localStorage.setItem(
-				"scheduleMeetings",
-				JSON.stringify(scheduledMeetings),
-			);
-		}
+		localStorage.setItem("scheduledMeetings", JSON.stringify(scheduledMeetings));
 	}, [scheduledMeetings]);
 
+	// Removes the reminded meeting and closes the reminder popup
+	const dismissReminder = () => {
+		if (nextReminder) {
+			setScheduledMeetings((prev) =>
+				prev.filter((meeting) => meeting.serial !== nextReminder.serial),
+			);
+		}
+		setNextReminder(null);
+		setIsReminderPopupOpen(false);
+	};
+
 	return (
-		<section id="App" className="space-y-4 mt-10 p-4">
-			{/* Popups */}
-			{/*  */}
-			{isPaymentPop && <PaymentPop setIsPaymentPop={setIsPaymentPop} />}
-			{/* Schedule Notification Pop */}
-			{isScheduleNotifyPop && scheduleNotification && (
-				<ScheduleNotficationPop
-					setIsScheduleNotifyPop={setIsScheduleNotifyPop}
-					scheduleNotification={scheduleNotification}
-					setScheduleNotification={setScheduleNotification}
-					setScheduledMeetings={setScheduledMeetings}
-				/>
-			)}
-			{/* Meeting Url */}
-			{isMeetingPop && (
-				<MeetingUrlPop
-					clipMeetingUrl={clipMeetingUrl}
-					setClipMeetingUrl={setClipMeetingUrl}
-					setIsMeetingPop={setIsMeetingPop}
-				/>
-			)}
-			{/* Schedule Meeting */}
-			{isScheduleMeetingPop && (
-				<ScheduleMeetingPop
+		<AppServices>
+			<section id="App" className="space-y-4 mt-10 p-4">
+				{/* Popups */}
+				{/* Meeting Reminder */}
+				{isReminderPopupOpen && nextReminder && (
+					<MeetingReminderPopup
+						meeting={nextReminder}
+						onClose={dismissReminder}
+					/>
+				)}
+				{/* Schedule Meeting */}
+				{isSchedulePopupOpen && (
+					<ScheduleMeetingPopup
+						currentTime={currentTime}
+						scheduledMeetings={scheduledMeetings}
+						setScheduledMeetings={setScheduledMeetings}
+						onClose={() => setIsSchedulePopupOpen(false)}
+					/>
+				)}
+
+				{/* Greetings */}
+				<PrimaryBox Child={<GreetingsCard formattedDate={formattedDate} />} />
+
+				{/* Create / Join */}
+				<div className="flex flex-row gap-x-4">
+					<PrimaryBox Child={<CreateMeetingCard />} className="flex-1" />
+					<PrimaryBox Child={<JoinMeetingCard />} className="flex-1" />
+				</div>
+
+				{/* Upcoming Meetings */}
+				<UpcomingMeetingsSection
 					currentTime={currentTime}
-					setIsScheduleMeetingPop={setIsScheduleMeetingPop}
 					scheduledMeetings={scheduledMeetings}
 					setScheduledMeetings={setScheduledMeetings}
+					onScheduleNew={() => setIsSchedulePopupOpen(true)}
 				/>
-			)}
 
-			{/* Greetings */}
-			<PrimaryBox Child={<GreetingsCard formattedDate={formattedDate} />} />
-
-			{/*  */}
-			<div className="flex flex-row gap-x-4">
-				<PrimaryBox Child={<CreateMeetingCard />} className="flex-1" />
-				<PrimaryBox Child={<JoinMeetingCard />} className="flex-1" />
-			</div>
-
-			{/* Upcoming Meetings */}
-			<ScheduledMeetingBox
-				currentTime={currentTime}
-				setIsScheduleMeetingPop={setIsScheduleMeetingPop}
-				scheduledMeetings={scheduledMeetings}
-				setScheduledMeetings={setScheduledMeetings}
-			/>
-
-			{/* Backgrounds */}
-			<BackgroundList />
-		</section>
+				{/* Backgrounds */}
+				<BackgroundsSection />
+			</section>
+		</AppServices>
 	);
 }
 

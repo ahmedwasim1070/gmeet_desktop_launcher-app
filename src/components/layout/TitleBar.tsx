@@ -1,12 +1,12 @@
 // Imports
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { Minus, Square, X } from "lucide-react";
-import logoSvg from "../assets/logo.svg";
+import logoSvg from "../../assets/logo.svg";
 
 const appWindow = getCurrentWindow();
 
-//
-function Navbar() {
+// Custom window title bar (the app runs with native decorations disabled)
+export const TitleBar = () => {
   return (
     <div
       data-tauri-drag-region
@@ -15,7 +15,7 @@ function Navbar() {
       {/* App Branding Area */}
       <div className="flex items-center gap-2 pointer-events-none">
         <img src={logoSvg} className="w-5 h-5" alt="App Logo" />
-        <span className="text-sm font-semibold text-gray-700">
+        <span className="text-sm font-semibold text-text-primary">
           G-Meet Desktop Launcher
         </span>
       </div>
@@ -26,7 +26,7 @@ function Navbar() {
         <button
           type="button"
           onClick={() => appWindow.minimize()}
-          className="h-full w-11 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-150 focus:outline-none"
+          className="h-full w-11 flex items-center justify-center text-text-muted hover:bg-gray-200 transition-colors duration-150 focus:outline-none"
         >
           <Minus className="w-4 h-4" strokeWidth={2} />
         </button>
@@ -35,7 +35,7 @@ function Navbar() {
         <button
           type="button"
           onClick={() => appWindow.toggleMaximize()}
-          className="h-full w-11 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors duration-150 focus:outline-none"
+          className="h-full w-11 flex items-center justify-center text-text-muted hover:bg-gray-200 transition-colors duration-150 focus:outline-none"
         >
           {/* Sized slightly smaller to visually match the Windows restore icon weight */}
           <Square className="w-3.5 h-3.5" strokeWidth={2} />
@@ -45,13 +45,11 @@ function Navbar() {
         <button
           type="button"
           onClick={() => appWindow.close()}
-          className="h-full w-11 flex items-center justify-center text-gray-600 hover:bg-[#e81123] hover:text-white transition-colors duration-150 focus:outline-none"
+          className="h-full w-11 flex items-center justify-center text-text-muted hover:bg-[#e81123] hover:text-white transition-colors duration-150 focus:outline-none"
         >
           <X className="w-4 h-4" strokeWidth={2} />
         </button>
       </div>
     </div>
   );
-}
-
-export default Navbar;
+};

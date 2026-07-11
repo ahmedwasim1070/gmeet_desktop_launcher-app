@@ -1,8 +1,8 @@
 // Imports
 import { CalendarX } from "lucide-react";
 
-//
-export const EmptyMeetingWidget = () => {
+// Placeholder shown when there are no upcoming meetings
+export const NoMeetingsPlaceholder = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center py-10 bg-bg-surface rounded-xl border border-border/10 border-dashed">
       <div className="w-16 h-16 bg-bg-base rounded-full flex items-center justify-center mb-4">

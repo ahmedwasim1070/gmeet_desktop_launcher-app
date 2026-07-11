@@ -1,9 +1,9 @@
 // Imports
 import React, { useState } from "react";
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { PrimaryButton } from "./ui/PrimaryButton";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
-//
+// Card that joins an existing meeting from a pasted URL or code
 export const JoinMeetingCard = () => {
   // States
   // Meeting url
@@ -58,7 +58,7 @@ export const JoinMeetingCard = () => {
         <p className="text-xl font-semibold">Join Meeting</p>
         {/*  */}
         <p className="text-text-muted">
-          Create meeting with one click, join and share instantly.
+          Join an existing meeting with a link or a code.
         </p>
       </div>
 
@@ -69,7 +69,7 @@ export const JoinMeetingCard = () => {
         onChange={handleInput}
         value={meetingLink}
         type="text"
-        className={`bg-bg-elevated w-full border rounded-lg p-2 outline-none  ${isMeetingLinkError ? "border-red-500 placeholder:text-red-400 " : "border-border focus:border-blue-600"}`}
+        className={`bg-bg-elevated w-full border rounded-lg p-2 outline-none  ${isMeetingLinkError ? "border-red-500 placeholder:text-red-400 " : "border-border focus:border-brand-blue"}`}
         placeholder={`${isMeetingLinkError ? "Google Meet Url or Code is required." : "📎 Paste your Meeting url or code."}`}
       />
 

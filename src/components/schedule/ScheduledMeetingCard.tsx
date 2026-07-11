@@ -1,23 +1,23 @@
 // Imports
 import { X } from "lucide-react";
-import { ScheduleMeeting } from "../types";
-import GoogleMeetLogoSvg from "../assets/g_meet-logo.svg";
-// Assuming this path based on your prompt:
-import { PrimaryButton } from "./ui/PrimaryButton";
+import type { ScheduledMeeting } from "../../types";
+import GoogleMeetLogoSvg from "../../assets/g_meet-logo.svg";
+import { PrimaryButton } from "../ui/PrimaryButton";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
-interface MeetingCardProps {
-  meeting: ScheduleMeeting;
+// Interface
+interface ScheduledMeetingCardProps {
+  meeting: ScheduledMeeting;
   currentTime: Date;
   onDelete: (serial: number) => void;
 }
 
-//
-export const MeetingCard = ({
+// Card for a single scheduled meeting inside the upcoming meetings list
+export const ScheduledMeetingCard = ({
   meeting,
   currentTime,
   onDelete,
-}: MeetingCardProps) => {
+}: ScheduledMeetingCardProps) => {
   // Merged TimeField Logic
   const processedDate = new Date(meeting.date);
   const isToday = processedDate.getDate() === currentTime.getDate();

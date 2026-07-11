@@ -1,8 +1,8 @@
 // Imports
 import { openUrl } from "@tauri-apps/plugin-opener";
-import { PrimaryButton } from "./ui/PrimaryButton";
+import { PrimaryButton } from "../ui/PrimaryButton";
 
-//
+// Card that opens a brand-new Google Meet in the browser
 export const CreateMeetingCard = () => {
   return (
     <div className="space-y-4">

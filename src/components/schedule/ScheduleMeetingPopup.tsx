@@ -1,22 +1,23 @@
 // Imports
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ScheduleMeeting } from "../types";
+import type { ScheduledMeeting } from "../../types";
 
 // Interfaces
-interface ScheduleMeetingPopProps {
+interface ScheduleMeetingPopupProps {
   currentTime: Date;
-  setIsScheduleMeetingPop: React.Dispatch<React.SetStateAction<boolean>>;
-  scheduledMeetings: ScheduleMeeting[];
-  setScheduledMeetings: React.Dispatch<React.SetStateAction<ScheduleMeeting[]>>;
+  scheduledMeetings: ScheduledMeeting[];
+  setScheduledMeetings: React.Dispatch<React.SetStateAction<ScheduledMeeting[]>>;
+  onClose: () => void;
 }
 
-function ScheduleMeetingPop({
+// Popup with a calendar to schedule a meeting within the next 30 days
+export function ScheduleMeetingPopup({
   currentTime,
-  setIsScheduleMeetingPop,
   scheduledMeetings,
   setScheduledMeetings,
-}: ScheduleMeetingPopProps) {
+  onClose,
+}: ScheduleMeetingPopupProps) {
   // States
   const [selectedDate, setSelectedDate] = useState<Date | null>(currentTime);
   const [selectedTime, setSelectedTime] = useState("09:00");
@@ -162,7 +163,7 @@ function ScheduleMeetingPop({
     const [hours, minutes] = selectedTime.split(":");
     meetingDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
 
-    const meetingData: ScheduleMeeting = {
+    const meetingData: ScheduledMeeting = {
       serial: scheduledMeetings.length + 1,
       name: meetingName ? meetingName : "meet.google.com",
       date: meetingDateTime.getTime(),
@@ -177,7 +178,7 @@ function ScheduleMeetingPop({
       return updated;
     });
 
-    setIsScheduleMeetingPop(false);
+    onClose();
   };
 
   // Render calendar days
@@ -210,10 +211,10 @@ function ScheduleMeetingPop({
           disabled={isDisabled}
           className={`w-8 h-8 text-sm rounded-md transition-colors ${
             isSelected
-              ? "bg-blue-500 text-white"
+              ? "bg-brand-blue text-white"
               : isDisabled
-                ? "text-gray-300 cursor-not-allowed"
-                : "hover:bg-gray-100 text-gray-700"
+                ? "text-text-muted/40 cursor-not-allowed"
+                : "hover:bg-bg-base text-text-primary"
           }`}
         >
           {day}
@@ -240,11 +241,13 @@ function ScheduleMeetingPop({
   ];
 
   return (
-    <section className="inset-0 fixed z-40 min-w-screen h-full bg-gray-900/30 flex justify-center items-center">
-      <div className="bg-white shadow-sm rounded-lg w-96 flex flex-col p-6 max-h-[90vh] overflow-y-auto">
+    <section className="inset-0 fixed z-40 min-w-screen h-full bg-text-primary/30 flex justify-center items-center">
+      <div className="bg-bg-surface shadow-sm rounded-lg w-96 flex flex-col p-6 max-h-[90vh] overflow-y-auto">
         <div className="text-center mb-4">
-          <h2 className="font-semibold text-lg mb-2">Schedule Meeting</h2>
-          <p className="text-gray-500 text-sm">
+          <h2 className="font-semibold text-lg mb-2 text-text-primary">
+            Schedule Meeting
+          </h2>
+          <p className="text-text-muted text-sm">
             Meetings can be scheduled within the next 30 days
           </p>
         </div>
@@ -254,16 +257,16 @@ function ScheduleMeetingPop({
           <div className="flex items-center justify-between mb-3">
             <button
               onClick={() => navigateMonth("prev")}
-              className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-md text-text-primary hover:bg-bg-base transition-colors"
             >
               <ChevronLeft size={20} />
             </button>
-            <h3 className="font-medium text-lg">
+            <h3 className="font-medium text-lg text-text-primary">
               {monthNames[currentMonth]} {currentYear}
             </h3>
             <button
               onClick={() => navigateMonth("next")}
-              className="p-1 rounded-md hover:bg-gray-100 transition-colors"
+              className="p-1 rounded-md text-text-primary hover:bg-bg-base transition-colors"
             >
               <ChevronRight size={20} />
             </button>
@@ -274,7 +277,7 @@ function ScheduleMeetingPop({
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
               <div
                 key={day}
-                className="text-center text-xs font-medium text-gray-500 p-1"
+                className="text-center text-xs font-medium text-text-muted p-1"
               >
                 {day}
               </div>
@@ -287,7 +290,7 @@ function ScheduleMeetingPop({
 
         {/* Meeting name input */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-primary mb-2">
             Meeting Name (Optional):
           </label>
           <input
@@ -295,14 +298,14 @@ function ScheduleMeetingPop({
             value={meetingName}
             onChange={(e) => setMeetingName(e.target.value)}
             placeholder="Enter meeting name (default: meet.google.com)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 bg-bg-elevated border border-border/40 rounded-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent"
           />
         </div>
 
         {/* Time selection */}
         {selectedDate && (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-primary mb-2">
               Select Time:
             </label>
             <input
@@ -310,10 +313,10 @@ function ScheduleMeetingPop({
               value={selectedTime}
               min={getMinTimeForToday()}
               onChange={(e) => setSelectedTime(e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
+              className={`w-full px-3 py-2 bg-bg-elevated border rounded-md focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
                 isTimeInPast(selectedTime, selectedDate)
                   ? "border-red-500 bg-red-50 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-blue-500"
+                  : "border-border/40 focus:ring-brand-blue"
               }`}
             />
             {isTimeInPast(selectedTime, selectedDate) && (
@@ -326,11 +329,11 @@ function ScheduleMeetingPop({
 
         {/* Meeting type selection */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-text-primary mb-2">
             Meeting Type:
           </label>
           <div className="flex gap-4">
-            <label className="flex items-center">
+            <label className="flex items-center text-text-primary">
               <input
                 type="radio"
                 name="meetingType"
@@ -339,11 +342,11 @@ function ScheduleMeetingPop({
                 onChange={(e) =>
                   setMeetingType(e.target.value as "new" | "existing")
                 }
-                className="mr-2"
+                className="mr-2 accent-brand-blue"
               />
               Create New Meeting
             </label>
-            <label className="flex items-center">
+            <label className="flex items-center text-text-primary">
               <input
                 type="radio"
                 name="meetingType"
@@ -352,7 +355,7 @@ function ScheduleMeetingPop({
                 onChange={(e) =>
                   setMeetingType(e.target.value as "new" | "existing")
                 }
-                className="mr-2"
+                className="mr-2 accent-brand-blue"
               />
               Add Existing URL
             </label>
@@ -362,7 +365,7 @@ function ScheduleMeetingPop({
         {/* Meeting URL input */}
         {meetingType === "existing" && (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-text-primary mb-2">
               Google Meet URL or Code:
             </label>
             <input
@@ -370,10 +373,10 @@ function ScheduleMeetingPop({
               value={meetingUrl}
               onChange={(e) => setMeetingUrl(e.target.value)}
               placeholder="https://meet.google.com/abc-defg-hij or abc-defg-hij"
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
+              className={`w-full px-3 py-2 bg-bg-elevated border rounded-md placeholder:text-text-muted focus:outline-none focus:ring-2 focus:border-transparent transition-colors ${
                 urlError
                   ? "border-red-500 bg-red-50 focus:ring-red-500"
-                  : "border-gray-300 focus:ring-blue-500"
+                  : "border-border/40 focus:ring-brand-blue"
               }`}
             />
             {urlError && (
@@ -386,8 +389,8 @@ function ScheduleMeetingPop({
 
         {/* Selected date display */}
         {selectedDate && (
-          <div className="mb-4 p-3 bg-blue-50 rounded-md">
-            <p className="text-sm text-blue-800">
+          <div className="mb-4 p-3 bg-brand-blue/10 rounded-md">
+            <p className="text-sm text-brand-blue">
               <span className="font-medium">Selected:</span>{" "}
               {selectedDate.toLocaleDateString("en-US", {
                 weekday: "long",
@@ -403,14 +406,14 @@ function ScheduleMeetingPop({
         {/* Action buttons */}
         <div className="w-full flex flex-row items-stretch gap-x-2 flex-nowrap mt-2">
           <button
-            onClick={() => setIsScheduleMeetingPop(false)}
-            className="w-1/2 py-2 bg-gray-300 rounded-lg text-gray-800 cursor-pointer hover:bg-gray-200 active:bg-gray-400 transition-colors"
+            onClick={onClose}
+            className="w-1/2 py-2 bg-bg-base border border-border/30 rounded-lg text-text-primary cursor-pointer hover:bg-bg-elevated active:bg-bg-base transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleAddMeeting}
-            className="w-1/2 py-2 bg-blue-500 rounded-lg text-white cursor-pointer hover:bg-blue-400 active:bg-blue-600 transition-colors"
+            className="w-1/2 py-2 bg-brand-blue rounded-lg text-white cursor-pointer hover:opacity-90 active:opacity-100 transition-opacity"
           >
             Add
           </button>
@@ -419,5 +422,3 @@ function ScheduleMeetingPop({
     </section>
   );
 }
-
-export default ScheduleMeetingPop;

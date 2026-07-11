@@ -2,10 +2,12 @@
 import { useEffect } from "react";
 import { readText } from "@tauri-apps/plugin-clipboard-manager";
 
-export default function useClipboardGmeetWatcher(
-  callback: (url: URL) => void,
+// Polls the system clipboard and fires the callback whenever a
+// Google Meet link or meeting code is copied.
+export function useMeetClipboardWatcher(
+  onMeetUrlDetected: (url: URL) => void,
   active: boolean = true,
-  interval: number = 1500
+  intervalMs: number = 1500,
 ): void {
   useEffect(() => {
     if (!active) return;
@@ -33,19 +35,19 @@ export default function useClipboardGmeetWatcher(
             try {
               const url = new URL(urlString);
               lastClipboard = url.toString();
-              callback(url);
+              onMeetUrlDetected(url);
             } catch {
               console.warn("Invalid URL generated, skipping:", urlString);
             }
           }
         }
       } catch (err) {
-        console.error("Error in useClipboardGmeetWatcher from Hooks:", err);
+        console.error("Error in useMeetClipboardWatcher:", err);
       }
     };
 
     checkClipboard();
-    const timer = setInterval(checkClipboard, interval);
+    const timer = setInterval(checkClipboard, intervalMs);
     return () => clearInterval(timer);
-  }, [active, interval]);
+  }, [active, intervalMs, onMeetUrlDetected]);
 }

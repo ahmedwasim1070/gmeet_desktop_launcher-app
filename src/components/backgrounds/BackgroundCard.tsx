@@ -1,17 +1,17 @@
 // Imports
 import { Download } from "lucide-react";
-import { ActionIconButton } from "./ui/ActionIconButton";
+import { ActionIconButton } from "../ui/ActionIconButton";
 
 // Interface
 interface BackgroundCardProps {
-	ImageLocation: string;
-	ImageDescription: string;
+	imageLocation: string;
+	imageDescription: string;
 }
 
-//
+// Card for a single downloadable virtual background
 export const BackgroundCard = ({
-	ImageLocation,
-	ImageDescription,
+	imageLocation,
+	imageDescription,
 }: BackgroundCardProps) => {
 	return (
 		<div className="w-[320px] shrink-0 bg-bg-surface rounded-xl p-5 relative border border-border/15 shadow-sm flex flex-col justify-between gap-y-4 transition-all hover:shadow-md">
@@ -21,13 +21,13 @@ export const BackgroundCard = ({
 					label="Download"
 					icon={<Download className="w-5 h-5" />}
 					onClick={() => {
-						console.log("Nigger");
+						// TODO: implement background download
 					}}
 				/>
 			</div>
 
 			{/*  */}
-			<img src={ImageLocation} alt={ImageDescription} />
+			<img src={imageLocation} alt={imageDescription} />
 		</div>
 	);
 };

@@ -1,10 +1,10 @@
 // Imports
 import { useRef } from "react";
-import { ScrollButtons } from "./ui/ScrollButtons";
-import { DraggableScrollList } from "./ui/DraggableScrollList";
+import { ScrollButtons } from "../ui/ScrollButtons";
+import { DraggableScrollList } from "../ui/DraggableScrollList";
 
-//
-export const BackgroundList = () => {
+// Horizontal list of downloadable virtual backgrounds (content pending)
+export const BackgroundsSection = () => {
 	//
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -34,14 +34,8 @@ export const BackgroundList = () => {
 				ref={scrollContainerRef}
 				className="w-full gap-x-5 py-2"
 			>
-				{/* {scheduledMeetings.map((meeting) => (
-						<MeetingCard
-							key={meeting.serial}
-							meeting={meeting}
-							currentTime={currentTime}
-							onDelete={handleMeetingDeletion}
-						/>
-					))} */}
+				{/* TODO: render <BackgroundCard /> items once background assets exist */}
+				{null}
 			</DraggableScrollList>
 		</section>
 	);
