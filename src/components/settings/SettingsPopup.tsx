@@ -2,48 +2,16 @@
 import {
 	ArrowUpRight,
 	Crown,
-	FileText,
-	Hand,
-	Mail,
-	Star,
 } from "lucide-react";
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Popup } from "../ui/Popup";
 import { UsePremium } from "../../providers/PremiumProvider";
+import { SUPPORT_LINKS } from "../../constants";
 
 // Interface
 interface SettingsPopupProps {
 	onClose: () => void;
 }
-
-// Support & legal destinations — leave url empty to show "Coming soon"
-const SUPPORT_EMAIL = ""; // TODO: set the support email address
-const SUPPORT_LINKS = [
-	{
-		label: "Rate G-Meet Launcher",
-		icon: <Star className="w-4 h-4" />,
-		value: "",
-		url: "ms-windows-store://review/?ProductId=9PHKS01R0C0B",
-	},
-	{
-		label: "Contact support",
-		icon: <Mail className="w-4 h-4" />,
-		value: SUPPORT_EMAIL,
-		url: SUPPORT_EMAIL ? `mailto:${SUPPORT_EMAIL}` : "",
-	},
-	{
-		label: "Terms of Service",
-		icon: <FileText className="w-4 h-4" />,
-		value: "",
-		url: "", // TODO: terms of service page
-	},
-	{
-		label: "Privacy Policy",
-		icon: <Hand className="w-4 h-4" />,
-		value: "",
-		url: "", // TODO: privacy policy page
-	},
-];
 
 // Settings popup — plan overview plus support & legal links
 export function SettingsPopup({ onClose }: SettingsPopupProps) {

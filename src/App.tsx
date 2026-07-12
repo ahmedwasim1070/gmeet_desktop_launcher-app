@@ -36,7 +36,7 @@ function AppContent() {
 	const { clipboardMeetingUrl, dismissClipboardMeeting } = UseClipboard();
 
 	return (
-		<section id="App" className="space-y-4 mt-10 p-4">
+		<section id="App" className="space-y-4 mt-10 p-4 app-scroll flex-1">
 
 			{/* Popups */}
 			{/* Meeting Reminder */}

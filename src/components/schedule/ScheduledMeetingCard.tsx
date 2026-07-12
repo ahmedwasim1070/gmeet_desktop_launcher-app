@@ -48,7 +48,7 @@ export const ScheduledMeetingCard = ({
         <img
           src={GoogleMeetLogoSvg}
           className="w-11 h-11 drop-shadow-sm"
-          alt="Meet"
+          alt="Meet Logo"
         />
         <div className="text-left overflow-hidden">
           <p className="font-semibold text-lg text-text-primary truncate">

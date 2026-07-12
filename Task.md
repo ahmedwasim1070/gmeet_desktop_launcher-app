@@ -121,11 +121,7 @@ Use `usePremiumServices().isPremium` to gate:
 - `windows` crate docs (`Services::Store`): <https://microsoft.github.io/windows-docs-rs/doc/windows/Services/Store/>
 
 
-https://sites.google.com/view/ideaforge-web/home
-https://sites.google.com/view/ideaforge-web/support
 
-
--- Premium Screen !
 -- .css - scroll bar ! 
 	<main className="app-scroll flex-1">
 		{/* ...rest of AppContent */}

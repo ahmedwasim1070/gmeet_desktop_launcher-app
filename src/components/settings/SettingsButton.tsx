@@ -1,4 +1,5 @@
 // Imports
+import { Dispatch,SetStateAction } from "react";
 import { Settings } from "lucide-react";
 
 // Interface

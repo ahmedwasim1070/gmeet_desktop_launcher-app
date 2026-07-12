@@ -1,7 +1,10 @@
 // Imports
 import { useState } from "react";
-import { CalendarDays, Headset, ShieldCheck, Wallpaper, X } from "lucide-react";
+import { CalendarDays, Headset, ShieldCheck, Wallpaper } from "lucide-react";
 import type { PremiumPlanCode } from "../../types";
+import { SUPPORT_LINKS } from "../../constants";
+import { CloseButton } from "../ui/CloseButton";
+import GoogleMeetLogoSvg from "../../assets/g_meet-logo.svg";
 
 // Interface
 interface PremiumPlansPopupProps {
@@ -9,8 +12,7 @@ interface PremiumPlansPopupProps {
     onPurchase: (plan: PremiumPlanCode) => Promise<void>;
 }
 
-// Popup listing the premium plans; purchases go through the Microsoft Store
-// (see services/microsoftStore.ts and Task.md)
+//
 export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProps) {
     // States
     // Selected Plan
@@ -56,18 +58,6 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
             price: '20.00 $',
         },
     ]
-    // Support Link
-    const footerLinks = [
-        {
-            label: 'Terms of Service | ',
-        },
-        {
-            label: 'Support | ',
-        },
-        {
-            label: 'Privacy Policy',
-        },
-    ]
 
     // Handle purchase
     const handleContinue = async () => {
@@ -84,9 +74,7 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
             {/*  */}
             <div className="bg-bg-surface max-h-[98%] rounded-lg relative overflow-y-scroll">
                 {/* Cross btn */}
-                <button onClick={onClose} className="p-2 bg-bg-base rounded-full absolute right-3 top-3 cursor-pointer hover:bg-gray-300 active:bg-gray-400 transition-colors">
-                    <X className="w-6 h-6 text-text-muted" />
-                </button>
+                <CloseButton onClick={onClose}/>
 
                 <div className="flex flex-col items-center justify-center text-center px-7 py-4 gap-y-2">
                     {/*  */}
@@ -94,7 +82,11 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
 
                     {/*  */}
                     <div className="flex flex-row my-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px"><rect width="16" height="16" x="12" y="16" fill="#fff" transform="rotate(-90 20 24)" /><polygon fill="#1e88e5" points="3,17 3,31 8,32 13,31 13,17 8,16" /><path fill="#4caf50" d="M37,24v14c0,1.657-1.343,3-3,3H13l-1-5l1-5h14v-7l5-1L37,24z" /><path fill="#fbc02d" d="M37,10v14H27v-7H13l-1-5l1-5h21C35.657,7,37,8.343,37,10z" /><path fill="#1565c0" d="M13,31v10H6c-1.657,0-3-1.343-3-3v-7H13z" /><polygon fill="#e53935" points="13,7 13,17 3,17" /><polygon fill="#2e7d32" points="38,24 37,32.45 27,24 37,15.55" /><path fill="#4caf50" d="M46,10.11v27.78c0,0.84-0.98,1.31-1.63,0.78L37,32.45v-16.9l7.37-6.22C45.02,8.8,46,9.27,46,10.11z" /></svg>
+                        <img
+                          src={GoogleMeetLogoSvg}
+                          className="w-11 h-11 drop-shadow-sm"
+                          alt="Meet Logo"
+                        />
                         <h1 className="max-w-90 text-2xl font-bold text-center">Join Google Meetings With Ease.</h1>
                     </div>
 
@@ -151,11 +143,17 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
 
                     {/*  */}
                     <ul className="flex flex-row items-center gap-x-2">
-                        {footerLinks.map((nav, idx) => (
-                            <li key={idx} className="text-sm text-text-muted cursor-pointer group">
-                                <a className="group-hover:underline" href="">{nav.label}</a>
-                            </li>
-                        ))}
+                        <li key={SUPPORT_LINKS[2].value} className="text-sm text-text-muted cursor-pointer group">
+                            <a className="group-hover:underline" href={SUPPORT_LINKS[2].url}>{SUPPORT_LINKS[2].label}</a>
+                        </li>
+                        <li aria-hidden="true" className="text-text-muted">|</li>
+                        <li>
+                            <button onClick={onClose} className="text-sm text-text-muted cursor-pointer hover:underline">Continue without Subscription</button>
+                        </li>
+                        <li aria-hidden="true" className="text-text-muted">|</li>
+                        <li key={SUPPORT_LINKS[3].value} className="text-sm text-text-muted cursor-pointer group">
+                            <a className="group-hover:underline" href={SUPPORT_LINKS[3].url}>{SUPPORT_LINKS[3].label}</a>
+                        </li>
                     </ul>
 
                 </div>
