@@ -121,9 +121,6 @@ Use `usePremiumServices().isPremium` to gate:
 - `windows` crate docs (`Services::Store`): <https://microsoft.github.io/windows-docs-rs/doc/windows/Services/Store/>
 
 
-
--- .css - scroll bar ! 
-	<main className="app-scroll flex-1">
-		{/* ...rest of AppContent */}
-	</main>
--- Popup : settings & Schedule a meeting Pop
+-- Scrollbar -> .css
+-- Backgrounds
+-- Premium backend - logic

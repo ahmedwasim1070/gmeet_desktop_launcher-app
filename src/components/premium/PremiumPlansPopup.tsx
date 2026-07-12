@@ -5,6 +5,7 @@ import type { PremiumPlanCode } from "../../types";
 import { SUPPORT_LINKS } from "../../constants";
 import { CloseButton } from "../ui/CloseButton";
 import GoogleMeetLogoSvg from "../../assets/g_meet-logo.svg";
+import { openUrl } from "@tauri-apps/plugin-opener";
 
 // Interface
 interface PremiumPlansPopupProps {
@@ -72,7 +73,7 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
     return (
         <section className="min-w-screen min-h-screen bg-text-primary/40 backdrop-blur-sm fixed z-50 inset-0 flex items-center justify-center">
             {/*  */}
-            <div className="bg-bg-surface max-h-[98%] rounded-lg relative overflow-y-scroll">
+            <div className="bg-bg-surface rounded-lg relative">
                 {/* Cross btn */}
                 <CloseButton onClick={onClose}/>
 
@@ -81,7 +82,7 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
                     <p>Unlock <strong className="text-brand-blue">Premium</strong> Features</p>
 
                     {/*  */}
-                    <div className="flex flex-row my-2">
+                    <div className="flex items-center flex-row gap-x-2">
                         <img
                           src={GoogleMeetLogoSvg}
                           className="w-11 h-11 drop-shadow-sm"
@@ -143,17 +144,15 @@ export function PremiumPlansPopup({ onClose, onPurchase }: PremiumPlansPopupProp
 
                     {/*  */}
                     <ul className="flex flex-row items-center gap-x-2">
-                        <li key={SUPPORT_LINKS[2].value} className="text-sm text-text-muted cursor-pointer group">
-                            <a className="group-hover:underline" href={SUPPORT_LINKS[2].url}>{SUPPORT_LINKS[2].label}</a>
-                        </li>
+                        <button className="text-sm text-text-muted cursor-pointer hover:underline" onClick={async()=>{await openUrl(SUPPORT_LINKS[2].url)}}>{SUPPORT_LINKS[2].label}</button>
+
                         <li aria-hidden="true" className="text-text-muted">|</li>
-                        <li>
-                            <button onClick={onClose} className="text-sm text-text-muted cursor-pointer hover:underline">Continue without Subscription</button>
-                        </li>
+
+                        <button onClick={onClose} className="text-sm text-text-muted cursor-pointer hover:underline">Continue without Subscription</button>
+
                         <li aria-hidden="true" className="text-text-muted">|</li>
-                        <li key={SUPPORT_LINKS[3].value} className="text-sm text-text-muted cursor-pointer group">
-                            <a className="group-hover:underline" href={SUPPORT_LINKS[3].url}>{SUPPORT_LINKS[3].label}</a>
-                        </li>
+
+                        <button className="text-sm text-text-muted cursor-pointer hover:underline" onClick={async()=>{await openUrl(SUPPORT_LINKS[3].url)}}>{SUPPORT_LINKS[3].label}</button>
                     </ul>
 
                 </div>

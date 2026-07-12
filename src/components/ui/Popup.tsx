@@ -14,7 +14,7 @@ export function Popup({ onClose, children, className = "" }: PopupProps) {
 	return (
 		<section
 			onClick={onClose}
-			className="fixed inset-0 z-40 bg-text-primary/30 flex justify-center items-center"
+			className="min-h-screen min-w-screen fixed inset-0 z-40 bg-text-primary/20 flex justify-center items-center"
 		>
 			<div
 				onClick={(e) => e.stopPropagation()}

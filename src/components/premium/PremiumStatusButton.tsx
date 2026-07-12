@@ -1,12 +1,12 @@
 // Imports
-import { usePremiumServices } from "../../services/AppServices";
 import { Crown } from "lucide-react";
 import { ActionIconButton } from "../ui/ActionIconButton";
+import { UsePremium } from "../../providers/PremiumProvider";
 
 //
 export const PremiumStatusButton = () => {
 	// From Provider
-	const { isPremium, openPremiumPopup } = usePremiumServices();
+	const {isPremium,openPremiumPopup} = UsePremium();
 
 	return (
 		<>

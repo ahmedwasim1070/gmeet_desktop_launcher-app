@@ -7,6 +7,8 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { Popup } from "../ui/Popup";
 import { UsePremium } from "../../providers/PremiumProvider";
 import { SUPPORT_LINKS } from "../../constants";
+import { useEffect, useState } from "react";
+import { getVersion } from "@tauri-apps/api/app";
 
 // Interface
 interface SettingsPopupProps {
@@ -16,6 +18,8 @@ interface SettingsPopupProps {
 // Settings popup — plan overview plus support & legal links
 export function SettingsPopup({ onClose }: SettingsPopupProps) {
 	const { license, isPremium, openPremiumPopup } = UsePremium();
+	// States
+	const [appVersion, setAppVersion] = useState<string>("1.0.0"); 
 
 	const userName = localStorage.getItem("userName") || "User";
 
@@ -27,6 +31,19 @@ export function SettingsPopup({ onClose }: SettingsPopupProps) {
 			console.error("Error opening link from SettingsPopup:", err);
 		}
 	};
+
+	//
+  	useEffect(() => {
+  	  const fetchVersion = async () => {
+  	    try {
+  	      const version = await getVersion();
+  	      setAppVersion(version);
+  	    } catch (error) {
+  	      console.error("Failed to fetch app version:", error);
+  	    }
+  	  };
+  	  fetchVersion();
+  	}, []);
 
 	return (
 		<Popup onClose={onClose} className="gap-y-6">
@@ -124,7 +141,7 @@ export function SettingsPopup({ onClose }: SettingsPopupProps) {
 
 			{/* App info */}
 			<div className="text-xs text-text-muted space-y-0.5">
-				<p>G-Meet Desktop Launcher 1.0.0</p>
+				<p>G-Meet Desktop Launcher {appVersion}</p>
 				<p>Not affiliated with Google.</p>
 			</div>
 		</Popup>
