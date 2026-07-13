@@ -3,6 +3,8 @@ import { X } from "lucide-react";
 import type { ScheduledMeeting } from "../../types";
 import GoogleMeetLogoSvg from "../../assets/g_meet-logo.svg";
 import { PrimaryButton } from "../ui/PrimaryButton";
+import { PremiumStatusButton } from "../premium/PremiumStatusButton";
+import { UsePremium } from "../../providers/PremiumProvider";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
 // Interface
@@ -18,6 +20,8 @@ export const ScheduledMeetingCard = ({
   currentTime,
   onDelete,
 }: ScheduledMeetingCardProps) => {
+  // From Provider
+  const { isPremium } = UsePremium();
   // Merged TimeField Logic
   const processedDate = new Date(meeting.date);
   const isToday = processedDate.getDate() === currentTime.getDate();
@@ -35,6 +39,13 @@ export const ScheduledMeetingCard = ({
 
   return (
     <div className="w-[320px] shrink-0 bg-bg-surface rounded-xl p-5 relative border border-border/15 shadow-sm flex flex-col justify-between gap-y-4 transition-all hover:shadow-md">
+      {/* Premium Gate Overlay */}
+      {!isPremium && (
+        <div className="absolute inset-0 z-10 bg-text-primary/30 backdrop-blur-[2px] rounded-xl flex items-center justify-center">
+          <PremiumStatusButton label="Premium Feature" />
+        </div>
+      )}
+
       {/* Delete Button */}
       <button
         onClick={() => onDelete(meeting.serial)}

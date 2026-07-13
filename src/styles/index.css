@@ -26,7 +26,12 @@
   --color-scroll-thumb-hover: #a9afc4;
 }
 
-/*  */
+/* Scroll strategy: html/body/#root are locked so the window itself never
+   scrolls (keeps the fixed TitleBar clean — no bar ever runs under it).
+   #App in App.tsx is the designated scroll region below the TitleBar and
+   uses .scrollbar-hidden — wheel/drag/keys still scroll, no visible bar.
+   Popups & horizontal lists scroll themselves (.scrollbar-hidden), and
+   .app-scroll stays available for any region that needs a themed bar. */
 @layer base {
   /* App shell: never scroll the window itself */
   html,

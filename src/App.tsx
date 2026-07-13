@@ -31,12 +31,14 @@ function AppContent() {
 	// Reminder state
 	const { nextReminder, isReminderPopupOpen, dismissReminder } = UseReminder();
 	// Premium state
-	const { isPremiumPopupOpen, closePremiumPopup, purchase } = UsePremium();
+	const { isPremium, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup, purchase } = UsePremium();
 	// Clipboard state
 	const { clipboardMeetingUrl, dismissClipboardMeeting } = UseClipboard();
 
 	return (
-		<section id="App" className="space-y-4 mt-10 p-4 scrollbar-hidden">
+		/* Designated scroll region — fills the window below the fixed TitleBar
+		   (h-8); scrolls with wheel/drag/keys but the bar itself stays hidden */
+		<section id="App" className="h-[calc(100vh-2rem)] mt-8 overflow-y-auto scrollbar-hidden space-y-4 p-4">
 
 			{/* Popups */}
 			{/* Meeting Reminder */}
@@ -81,9 +83,11 @@ function AppContent() {
 				<PrimaryBox Child={<JoinMeetingCard />} className="flex-1" />
 			</div>
 
-			{/* Upcoming Meetings */}
+			{/* Upcoming Meetings — scheduling is a premium feature */}
 			<UpcomingMeetingsSection
-				onScheduleNew={() => setIsSchedulePopupOpen(true)}
+				onScheduleNew={() =>
+					isPremium ? setIsSchedulePopupOpen(true) : openPremiumPopup()
+				}
 			/>
 
 			{/* Backgrounds */}

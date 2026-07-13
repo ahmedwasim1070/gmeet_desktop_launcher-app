@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import type { ScheduledMeeting } from "../types";
-import { ReminderService, MAX_TIMEOUT_MS } from "../services/ReminderService";
+import { ReminderService } from "../services/ReminderService";
 import { UseApp } from "./AppProvider";
 
 // Interface

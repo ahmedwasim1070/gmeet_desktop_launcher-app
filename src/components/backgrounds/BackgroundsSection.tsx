@@ -8,22 +8,22 @@ import { BackgroundCard } from "./BackgroundCard";
 export const BackgroundsSection = () => {
 	//
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
-	// Backgrounds 
+	// Backgrounds
 	const backgrounds=[
 		{
-			url: "/bg-.jpg",
+			url: "/backgrounds/bg-1.jpg",
 			alt: "Asthetic Background Image",
 		},
 		{
-			url: "/bg-.jpg",
+			url: "/backgrounds/bg-2.jpg",
 			alt: "Asthetic Background Image",
 		},
 		{
-			url: "/bg-.jpg",
+			url: "/backgrounds/bg-3.jpg",
 			alt: "Asthetic Background Image",
 		},
 		{
-			url: "/bg-.jpg",
+			url: "/backgrounds/bg-4.jpg",
 			alt: "Asthetic Background Image",
 		},
 	]

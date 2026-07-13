@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { ScheduledMeeting } from "../../types";
-import { CloseButton } from "../ui/CloseButton";
 import { useTime } from "../../providers/TimeProvider";
 import { UseApp } from "../../providers/AppProvider";
 import { Popup } from "../ui/Popup";

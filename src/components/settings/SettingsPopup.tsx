@@ -84,9 +84,11 @@ export function SettingsPopup({ onClose }: SettingsPopupProps) {
 					{/* Plan row */}
 					<div className="flex flex-row items-center justify-between">
 						<p className="text-sm text-text-primary">
-							{isPremium
-								? "You're on the premium plan."
-								: "You're on the free plan."}
+							{license.plan === "developer"
+								? "Developer environment — premium unlocked for testing."
+								: isPremium
+									? "You're on the premium plan."
+									: "You're on the free plan."}
 						</p>
 						{!isPremium && (
 							<button

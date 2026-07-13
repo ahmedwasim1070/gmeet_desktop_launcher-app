@@ -8,7 +8,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "tauri:windows:build": "tauri-windows-bundle build"
+    "tauri:windows:build": "tauri-windows-bundle build --arch x64,arm64",
+    "tauri:windows:build:x64": "tauri-windows-bundle build --arch x64"
   },
   "dependencies": {
     "@fontsource/roboto": "^5.2.10",

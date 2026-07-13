@@ -9,11 +9,12 @@ export type ScheduledMeeting = {
   url: string;
 };
 
-// Premium plan codes — must match the add-on Store IDs mapping in services/microsoftStore.ts
+// Premium plan codes — must match the add-on Store IDs mapping in services/PremiumServices.ts
 export type PremiumPlanCode = "annual" | "lifetime";
 
-// License state resolved from the Microsoft Store (see Task.md)
+// License state resolved from the Microsoft Store (see Task.md).
+// "developer" is the dev-build-only testing license (never from the Store).
 export type PremiumLicense = {
   isPremium: boolean;
-  plan: PremiumPlanCode | "free";
+  plan: PremiumPlanCode | "free" | "developer";
 };
