@@ -31,26 +31,28 @@ function AppContent() {
 	// Reminder state
 	const { nextReminder, isReminderPopupOpen, dismissReminder } = UseReminder();
 	// Premium state
-	const { isPremium, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup, purchase } = UsePremium();
+	const { isPremium, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup } =
+		UsePremium();
 	// Clipboard state
 	const { clipboardMeetingUrl, dismissClipboardMeeting } = UseClipboard();
 
 	return (
-		/* Designated scroll region — fills the window below the fixed TitleBar
-		   (h-8); scrolls with wheel/drag/keys but the bar itself stays hidden */
-		<section id="App" className="h-[calc(100vh-2rem)] mt-8 overflow-y-auto scrollbar-hidden space-y-4 p-4">
-
+		<section
+			id="App"
+			className="h-[calc(100vh-2rem)] mt-8 overflow-y-auto scrollbar-hidden space-y-4 p-4"
+		>
 			{/* Popups */}
 			{/* Meeting Reminder */}
 			{isReminderPopupOpen && nextReminder && (
-				<MeetingReminderPopup meeting={nextReminder} onClose={dismissReminder} />
+				<MeetingReminderPopup
+					meeting={nextReminder}
+					onClose={dismissReminder}
+				/>
 			)}
 
 			{/* Schedule Meeting */}
 			{isSchedulePopupOpen && (
-				<ScheduleMeetingPopup
-					onClose={() => setIsSchedulePopupOpen(false)}
-				/>
+				<ScheduleMeetingPopup onClose={() => setIsSchedulePopupOpen(false)} />
 			)}
 
 			{/* Settings Popup */}
@@ -67,15 +69,13 @@ function AppContent() {
 			)}
 
 			{/* Premium Plans */}
-			{isPremiumPopupOpen && (
-				<PremiumPlansPopup onClose={closePremiumPopup} onPurchase={purchase} />
-			)}
+			{isPremiumPopupOpen && <PremiumPlansPopup onClose={closePremiumPopup} />}
 
 			{/* Header */}
-			<Header  />
+			<Header />
 
 			{/* Greetings */}
-			<PrimaryBox Child={<GreetingsCard  />} />
+			<PrimaryBox Child={<GreetingsCard />} />
 
 			{/* Create / Join */}
 			<div className="flex flex-row gap-x-4">

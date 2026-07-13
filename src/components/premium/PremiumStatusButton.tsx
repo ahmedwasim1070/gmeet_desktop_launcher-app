@@ -30,7 +30,7 @@ export const PremiumStatusButton = ({
 	if (license.plan === "developer") {
 		return (
 			<ActionIconButton
-				label="Developer Premium"
+				label="Premium"
 				icon={<Crown />}
 				onClick={openPremiumPopup}
 			/>

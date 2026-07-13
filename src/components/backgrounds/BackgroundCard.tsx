@@ -1,9 +1,9 @@
 // Imports
 import { useState } from "react";
 import { Check, Download, Loader2 } from "lucide-react";
-import { downloadBackground } from "../../services/backgrounds";
 import { PremiumStatusButton } from "../premium/PremiumStatusButton";
 import { UsePremium } from "../../providers/PremiumProvider";
+import { invoke } from "@tauri-apps/api/core";
 
 // Interface
 interface BackgroundCardProps {
@@ -17,17 +17,35 @@ export const BackgroundCard = ({
 	imageDescription,
 }: BackgroundCardProps) => {
 	// From Provider
-	const {isPremium} = UsePremium();
+	const { isPremium } = UsePremium();
 	// States
 	// Download progress
-	const [downloadState, setDownloadState] = useState<"idle" | "saving" | "saved">("idle");
+	const [downloadState, setDownloadState] = useState<
+		"idle" | "saving" | "saved"
+	>("idle");
 
 	// Saves the background into the user's Downloads folder
 	const handleDownload = async () => {
 		if (downloadState === "saving") return;
 		setDownloadState("saving");
 		try {
-			await downloadBackground(imageLocation.split("/").pop() ?? "");
+			// 1. Extract just the file name (e.g., "bg-1.jpg" from "/backgrounds/bg-1.jpg")
+			const fileName = imageLocation.split("/").pop() || "background.jpg";
+
+			// 2. Fetch the image directly from Vite/Tauri's local web server
+			const response = await fetch(imageLocation);
+			const blob = await response.blob();
+			const arrayBuffer = await blob.arrayBuffer();
+
+			// 3. Convert ArrayBuffer to a standard number array for Tauri IPC
+			const fileBytes = Array.from(new Uint8Array(arrayBuffer));
+
+			// 4. Send the clean file name and bytes to Rust!
+			await invoke<string>("save_background", {
+				fileName: fileName,
+				fileBytes: fileBytes,
+			});
+
 			setDownloadState("saved");
 		} catch (err) {
 			console.error("Error in handleDownload:", err);

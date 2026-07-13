@@ -8,25 +8,6 @@ import { BackgroundCard } from "./BackgroundCard";
 export const BackgroundsSection = () => {
 	//
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
-	// Backgrounds
-	const backgrounds=[
-		{
-			url: "/backgrounds/bg-1.jpg",
-			alt: "Asthetic Background Image",
-		},
-		{
-			url: "/backgrounds/bg-2.jpg",
-			alt: "Asthetic Background Image",
-		},
-		{
-			url: "/backgrounds/bg-3.jpg",
-			alt: "Asthetic Background Image",
-		},
-		{
-			url: "/backgrounds/bg-4.jpg",
-			alt: "Asthetic Background Image",
-		},
-	]
 
 	return (
 		<section className="w-full bg-bg-base">
@@ -54,11 +35,11 @@ export const BackgroundsSection = () => {
 				ref={scrollContainerRef}
 				className="w-full gap-x-5 py-2"
 			>
-				{backgrounds.map((background, idx) => (
+				{Array.from({ length: 8 }).map((_, idx) => (
 					<BackgroundCard
 						key={idx}
-						imageLocation={background.url}
-						imageDescription={background.alt}
+						imageLocation={`/backgrounds/bg-${idx + 1}.jpg`}
+						imageDescription={`Asthetic Background Image`}
 					/>
 				))}
 			</DraggableScrollList>

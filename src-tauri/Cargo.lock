@@ -1423,6 +1423,7 @@ dependencies = [
  "tauri-plugin-clipboard-manager",
  "tauri-plugin-notification",
  "tauri-plugin-opener",
+ "windows",
 ]
 
 [[package]]
