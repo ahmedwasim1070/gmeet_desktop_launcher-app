@@ -39,6 +39,7 @@ export const BackgroundsSection = () => {
 					<BackgroundCard
 						key={idx}
 						imageLocation={`/backgrounds/bg-${idx + 1}.jpg`}
+						previewLocation={`/backgrounds/thumbs/bg-${idx + 1}.jpg`}
 						imageDescription={`Asthetic Background Image`}
 					/>
 				))}

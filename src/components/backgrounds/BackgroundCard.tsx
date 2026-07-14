@@ -8,12 +8,15 @@ import { invoke } from "@tauri-apps/api/core";
 // Interface
 interface BackgroundCardProps {
 	imageLocation: string;
+	// Small preview shown in the card — the full-size image is only fetched on download
+	previewLocation: string;
 	imageDescription: string;
 }
 
 // Card for a single downloadable virtual background
 export const BackgroundCard = ({
 	imageLocation,
+	previewLocation,
 	imageDescription,
 }: BackgroundCardProps) => {
 	// From Provider
@@ -58,8 +61,11 @@ export const BackgroundCard = ({
 			{/* Image Preview */}
 			<div className="relative rounded-lg overflow-hidden">
 				<img
-					src={imageLocation}
+					src={previewLocation}
 					alt={imageDescription}
+					loading="lazy"
+					decoding="async"
+					draggable={false}
 					className="w-full h-44 object-cover pointer-events-none"
 				/>
 

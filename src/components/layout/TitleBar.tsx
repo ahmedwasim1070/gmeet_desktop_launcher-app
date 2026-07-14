@@ -10,7 +10,7 @@ export const TitleBar = () => {
   return (
     <div
       data-tauri-drag-region
-      className="flex items-center justify-between h-8 select-none fixed top-0 left-0 w-full z-50 px-2 bg-bg-base"
+      className="flex items-center justify-between h-8 shrink-0 select-none relative z-50 w-full px-2 bg-bg-base"
     >
       {/* App Branding Area */}
       <div className="flex items-center gap-2 pointer-events-none">

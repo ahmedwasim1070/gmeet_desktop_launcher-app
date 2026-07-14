@@ -1,11 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" width="100%" height="100%">
-  <path d="M 76 100 L 32 100 L 32 88 A 32 32 0 0 1 64 56 L 76 56 Z" fill="#e94335" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Flat brand glyph: desktop monitor with camera (transparent background) -->
+  <rect x="46" y="78" width="420" height="286" rx="30" fill="#004aad" />
+  <rect x="230" y="364" width="52" height="42" fill="#004aad" />
+  <rect x="146" y="406" width="220" height="30" rx="15" fill="#004aad" />
 
-  <path d="M 76 100 L 76 56 L 160 56 A 32 32 0 0 1 192 88 L 192 100 Z" fill="#f8ba06" />
-
-  <path d="M 76 100 L 76 216 L 64 216 A 32 32 0 0 1 32 184 L 32 100 Z" fill="#4885ee" />
-
-  <path d="M 148 100 L 192 100 L 192 184 A 32 32 0 0 1 160 216 L 76 216 L 76 172 L 148 172 Z" fill="#3fa556" />
-
-  <path d="M 190 100 L 234 65 A 16 16 0 0 1 254 77 L 254 195 A 16 16 0 0 1 234 207 L 190 172 Z" fill="#3fa556" />
+  <!-- Camera cut-out in white -->
+  <rect x="112" y="148" width="182" height="146" rx="26" fill="#ffffff" />
+  <path d="M308 200 L370 163 q18 -11 18 12 v92 q0 23 -18 12 L308 242 Z" fill="#ffffff" />
 </svg>

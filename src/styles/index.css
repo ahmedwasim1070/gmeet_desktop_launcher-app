@@ -27,11 +27,13 @@
 }
 
 /* Scroll strategy: html/body/#root are locked so the window itself never
-   scrolls (keeps the fixed TitleBar clean — no bar ever runs under it).
-   #App in App.tsx is the designated scroll region below the TitleBar and
-   uses .scrollbar-hidden — wheel/drag/keys still scroll, no visible bar.
-   Popups & horizontal lists scroll themselves (.scrollbar-hidden), and
-   .app-scroll stays available for any region that needs a themed bar. */
+   scrolls. #root is a flex column — the TitleBar takes its fixed row and
+   #App in App.tsx flexes to fill the rest, so its height comes from normal
+   flex layout (no vh math to redo on every window resize). #App is the
+   designated scroll region and uses .scrollbar-hidden — wheel/drag/keys
+   still scroll, no visible bar. Popups & horizontal lists scroll themselves
+   (.scrollbar-hidden), and .app-scroll stays available for any region that
+   needs a themed bar. */
 @layer base {
   /* App shell: never scroll the window itself */
   html,
@@ -41,6 +43,12 @@
     width: 100%;
     margin: 0;
     overflow: hidden; /* the window never scrolls — inner panels do */
+  }
+
+  /* TitleBar row on top, #App fills the remaining height */
+  #root {
+    display: flex;
+    flex-direction: column;
   }
 
   /* Desktop app feel, not a webpage */

@@ -39,7 +39,7 @@ function AppContent() {
 	return (
 		<section
 			id="App"
-			className="h-[calc(100vh-2rem)] mt-8 overflow-y-auto scrollbar-hidden space-y-4 p-4"
+			className="flex-1 min-h-0 overflow-y-auto scrollbar-hidden space-y-4 p-4"
 		>
 			{/* Popups */}
 			{/* Meeting Reminder */}
