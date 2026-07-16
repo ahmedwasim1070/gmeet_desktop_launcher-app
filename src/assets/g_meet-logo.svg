@@ -1,10 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <!-- Flat brand glyph: desktop monitor with camera (transparent background) -->
-  <rect x="46" y="78" width="420" height="286" rx="30" fill="#004aad" />
-  <rect x="230" y="364" width="52" height="42" fill="#004aad" />
-  <rect x="146" y="406" width="220" height="30" rx="15" fill="#004aad" />
+  <!-- Flat brand glyph: camcorder filled with the four-corner brand gradient
+       (transparent background; colors match scripts/generate_icons.py) -->
+  <defs>
+    <clipPath id="camcorder">
+      <rect x="8.4" y="105.6" width="344.8" height="300.8" rx="75" />
+      <path d="M 381.8 206.7 L 485.7 131.5 Q 503.6 118.6 503.6 140.6 L 503.6 371.4 Q 503.6 393.4 485.7 380.5 L 381.8 305.2 Z" />
+    </clipPath>
+    <filter id="camBlend" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="40" />
+    </filter>
+  </defs>
 
-  <!-- Camera cut-out in white -->
-  <rect x="112" y="148" width="182" height="146" rx="26" fill="#ffffff" />
-  <path d="M308 200 L370 163 q18 -11 18 12 v92 q0 23 -18 12 L308 242 Z" fill="#ffffff" />
+  <g clip-path="url(#camcorder)">
+    <!-- Quadrant colors blurred into each other along the midlines -->
+    <g filter="url(#camBlend)">
+      <rect x="-64" y="-64" width="320" height="320" fill="#4db276" />
+      <rect x="256" y="-64" width="320" height="320" fill="#f6c032" />
+      <rect x="-64" y="256" width="320" height="320" fill="#eb4132" />
+      <rect x="256" y="256" width="320" height="320" fill="#4c82f0" />
+    </g>
+  </g>
 </svg>

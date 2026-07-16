@@ -10,6 +10,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             store::get_premium_license,
+            store::get_premium_plan_prices,
             store::purchase_premium_plan,
             backgrounds::save_background
         ])

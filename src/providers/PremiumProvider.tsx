@@ -1,13 +1,16 @@
 // Import
 import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import type { PremiumLicense, PremiumPlanCode } from "../types";
-import { fetchPremiumLicense, purchasePremiumPlan } from "../services/PremiumServices";
+import type { PremiumLicense, PremiumPlan, PremiumPlanCode } from "../types";
+import { fetchPremiumLicense, fetchPremiumPlans, purchasePremiumPlan } from "../services/PremiumServices";
 
 // Interface
 interface PremiumProvidedProps {
 	license: PremiumLicense;
 	isPremium: boolean;
 	isLicenseLoading: boolean;
+	plans: PremiumPlan[];
+	arePlansLoading: boolean;
+	isPurchasing: boolean;
 	isPremiumPopupOpen: boolean;
 	openPremiumPopup: () => void;
 	closePremiumPopup: () => void;
@@ -29,10 +32,16 @@ export default function PremiumProvider({children}:PremiumProviderProps) {
 	});
 	// License resolution in flight (true until the Store answers)
 	const [isLicenseLoading, setIsLicenseLoading] = useState<boolean>(true);
+	// Purchasable plans, resolved live from the Store on startup
+	const [plans, setPlans] = useState<PremiumPlan[]>([]);
+	// Plans resolution in flight (true until the Store answers)
+	const [arePlansLoading, setArePlansLoading] = useState<boolean>(true);
+	// Purchase in flight
+	const [isPurchasing, setIsPurchasing] = useState<boolean>(false);
 	// Premium plans popup visibility
 	const [isPremiumPopupOpen, setIsPremiumPopupOpen] = useState<boolean>(false);
 
-	// Resolve the Store license once on startup
+	// Resolve the Store license and the live plans once on startup
 	useEffect(() => {
 		let cancelled = false;
 		fetchPremiumLicense().then((resolved) => {
@@ -42,6 +51,11 @@ export default function PremiumProvider({children}:PremiumProviderProps) {
 			// Pitch the premium plans once per launch to free users
 			if (!resolved.isPremium) setIsPremiumPopupOpen(true);
 		});
+		fetchPremiumPlans().then((resolved) => {
+			if (cancelled) return;
+			setPlans(resolved);
+			setArePlansLoading(false);
+		});
 		return () => {
 			cancelled = true;
 		};
@@ -49,10 +63,15 @@ export default function PremiumProvider({children}:PremiumProviderProps) {
 
 	// Purchase a plan through the Microsoft Store and refresh the license
 	const purchase = useCallback(async (plan: PremiumPlanCode) => {
-		const updatedLicense = await purchasePremiumPlan(plan);
-		setLicense(updatedLicense);
-		if (updatedLicense.isPremium) {
-			setIsPremiumPopupOpen(false);
+		setIsPurchasing(true);
+		try {
+			const updatedLicense = await purchasePremiumPlan(plan);
+			setLicense(updatedLicense);
+			if (updatedLicense.isPremium) {
+				setIsPremiumPopupOpen(false);
+			}
+		} finally {
+			setIsPurchasing(false);
 		}
 	}, []);
 	const openPremiumPopup = useCallback(() => setIsPremiumPopupOpen(true), []);
@@ -63,11 +82,14 @@ export default function PremiumProvider({children}:PremiumProviderProps) {
 		license,
 		isPremium: license.isPremium,
 		isLicenseLoading,
+		plans,
+		arePlansLoading,
+		isPurchasing,
 		isPremiumPopupOpen,
 		openPremiumPopup,
 		closePremiumPopup,
 		purchase,
-	}),[license, isLicenseLoading, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup, purchase])
+	}),[license, isLicenseLoading, plans, arePlansLoading, isPurchasing, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup, purchase])
 
 	return(
 		<PremiumProviderContext.Provider value={values}>

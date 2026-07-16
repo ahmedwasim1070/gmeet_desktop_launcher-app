@@ -21,12 +21,10 @@ interface PremiumPlansPopupProps {
 
 //
 export function PremiumPlansPopup({ onClose }: PremiumPlansPopupProps) {
-	const { purchase } = UsePremium();
+	const { plans, arePlansLoading, isPurchasing, purchase } = UsePremium();
 	// States
 	// Selected Plan
 	const [selectedPlan, setSelectedPlan] = useState<PremiumPlanCode>("annual");
-	// Purchase in flight
-	const [isPurchasing, setIsPurchasing] = useState<boolean>(false);
 	// Featured — must match what the license actually unlocks
 	const featuredItems = [
 		{
@@ -46,35 +44,9 @@ export function PremiumPlansPopup({ onClose }: PremiumPlansPopupProps) {
 			icon: <Headset size={20} />,
 		},
 	];
-	// Plans
-	const plans: {
-		planCode: PremiumPlanCode;
-		label: string;
-		slogan: string;
-		price: string;
-	}[] = [
-		{
-			planCode: "annual",
-			label: "Annual Plan",
-			slogan: "Once In a Year",
-			price: "5.00 $",
-		},
-		{
-			planCode: "lifetime",
-			label: "LifeTime Plan",
-			slogan: "One Time Only",
-			price: "20.00 $",
-		},
-	];
-
 	// Handle purchase
 	const handleContinue = async () => {
-		setIsPurchasing(true);
-		try {
-			await purchase(selectedPlan);
-		} finally {
-			setIsPurchasing(false);
-		}
+		await purchase(selectedPlan);
 	};
 
 	return (
@@ -117,9 +89,17 @@ export function PremiumPlansPopup({ onClose }: PremiumPlansPopupProps) {
 						))}
 					</div>
 
-					{/* Plans Showroom */}
+					{/* Plans Showroom — skeleton rows until the Store prices resolve */}
 					<div className="w-full">
-						{plans.map((plan) => (
+						{arePlansLoading &&
+							[0, 1].map((idx) => (
+								<div
+									key={idx}
+									aria-hidden="true"
+									className="w-full h-[76px] bg-bg-elevated rounded-lg border-2 border-transparent animate-pulse mb-0.5"
+								/>
+							))}
+						{!arePlansLoading && plans.map((plan) => (
 							<button
 								onClick={() => setSelectedPlan(plan.planCode)}
 								key={plan.planCode}
@@ -149,7 +129,7 @@ export function PremiumPlansPopup({ onClose }: PremiumPlansPopupProps) {
 					{/* Submit */}
 					<button
 						onClick={handleContinue}
-						disabled={isPurchasing}
+						disabled={isPurchasing || arePlansLoading}
 						className="bg-brand-blue hover:opacity-90 active:opacity-100 disabled:opacity-50 disabled:cursor-not-allowed text-white w-full py-3 rounded-lg text-lg font-semibold cursor-pointer"
 					>
 						<p>{isPurchasing ? "Processing..." : "Continue"}</p>
