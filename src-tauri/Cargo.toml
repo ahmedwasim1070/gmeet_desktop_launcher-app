@@ -7,7 +7,9 @@ edition = "2021"
 
 [lib]
 name = "gmeet_desktop_launcher_lib"
-crate-type = ["staticlib", "cdylib", "rlib"]
+# staticlib/cdylib are only needed for iOS/Android builds — desktop uses the
+# rlib through the [[bin]] target, so dropping them halves link work per build
+crate-type = ["rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
@@ -33,3 +35,11 @@ windows = { version = "0.61", features = [
 [[bin]]
 name = "G-MeetDesktopLauncher"
 path = "src/main.rs"
+
+# Smaller, faster release binary (Store package size counts against download)
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

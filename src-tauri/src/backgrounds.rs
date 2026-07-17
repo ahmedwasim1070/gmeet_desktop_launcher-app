@@ -21,9 +21,13 @@ pub async fn save_background(
     
     // 3. Create the full destination path
     let destination = downloads_dir.join(&file_name);
-    
-    // 4. Write the raw bytes directly to disk
-    std::fs::write(&destination, &file_bytes).map_err(|e| e.to_string())?;
 
-    Ok(destination.display().to_string())
+    // 4. Write the raw bytes to disk off the async runtime (fs::write blocks)
+    tauri::async_runtime::spawn_blocking(move || {
+        std::fs::write(&destination, &file_bytes)
+            .map_err(|e| e.to_string())
+            .map(|_| destination.display().to_string())
+    })
+    .await
+    .map_err(|e| e.to_string())?
 }
