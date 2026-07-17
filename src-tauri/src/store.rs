@@ -35,7 +35,7 @@ mod win {
     use super::PremiumLicense;
     use std::collections::HashMap;
     use windows::core::{Interface, HSTRING};
-    use windows::Foundation::Collections::IIterable;
+    use windows_collections::IIterable;
     use windows::Services::Store::{StoreContext, StoreProduct, StorePurchaseStatus};
     use windows::Win32::Foundation::HWND;
     use windows::Win32::UI::Shell::IInitializeWithWindow;

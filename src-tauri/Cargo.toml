@@ -31,6 +31,9 @@ windows = { version = "0.61", features = [
 	"Win32_Foundation",
 	"Win32_UI_Shell",
 ] }
+# Collection interfaces (IIterable etc.) were split out of the windows crate;
+# 0.2 is the exact version windows 0.61 links against — keep them in lockstep
+windows-collections = "0.2"
 
 [[bin]]
 name = "G-MeetDesktopLauncher"
