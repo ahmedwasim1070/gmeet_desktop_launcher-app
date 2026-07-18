@@ -1,6 +1,6 @@
 [package]
 name = "gmeet-desktop-launcher"
-version = "1.0.0"
+version = "1.0.3"
 description = "Lightweight desktop utility designed to streamline Google Meet access, scheduling, and session management. It removes browser overhead by providing a direct, native experience for launching and organizing meetings efficiently."
 authors = ["ideaforge"]
 edition = "2021"
