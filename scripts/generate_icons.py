@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Regenerate every app icon from the master art drawn below.
+"""Regenerate every app icon from the master logo at public/app-logo.png.
 
-Outputs (all overwritten in place):
+The master is expected to be a rounded-square logo (transparent padding is
+fine — it gets cropped off). Outputs (all overwritten in place):
   public/logo.png
   src-tauri/icons/*.png, icon.ico, icon.icns
   src-tauri/icons/Square*Logo.png + StoreLogo.png (Microsoft Store tiles, opaque)
@@ -14,33 +15,15 @@ Run from anywhere: python3 scripts/generate_icons.py
 
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
 ICONS = ROOT / "src-tauri" / "icons"
 PUBLIC = ROOT / "public"
+MASTER_ART = PUBLIC / "app-logo.png"
 
 MASTER = 1024
-CORNER = 0.227  # rounded-square corner radius as a fraction of the icon size
-
-# Four-corner palette (Google brand hues, softened for the gradient blend)
-GREEN = (77, 178, 118)
-YELLOW = (246, 192, 50)
-RED = (235, 65, 50)
-BLUE = (76, 130, 240)
-
-
-def gradient(size: int) -> Image.Image:
-    """Quadrant gradient: green/yellow over red/blue, blended along the midlines."""
-    grid = Image.new("RGB", (4, 4))
-    for x in range(4):
-        for y in range(4):
-            if y < 2:
-                grid.putpixel((x, y), GREEN if x < 2 else YELLOW)
-            else:
-                grid.putpixel((x, y), RED if x < 2 else BLUE)
-    smooth = grid.resize((size, size), Image.BILINEAR)
-    return smooth.filter(ImageFilter.GaussianBlur(size * 0.06))
+CORNER = 0.221  # master art's baked-in corner radius as a fraction of its size
 
 
 def rounded_mask(size: int, radius: int) -> Image.Image:
@@ -60,70 +43,34 @@ def circle_mask(size: int) -> Image.Image:
     return mask.resize((size, size), Image.LANCZOS)
 
 
-def glyph_mask(size: int) -> Image.Image:
-    """White camcorder: rounded body plus a horn on the right."""
-    ss = 4
-    s = size * ss
-    u = s / 1024.0
-    cx, cy, k = 521, 518, 1.08  # glyph center and scale in 1024-space
-
-    def sx(v: float) -> float:
-        return (cx + (v - cx) * k) * u
-
-    def sy(v: float) -> float:
-        return (cy + (v - cy) * k) * u
-
-    mask = Image.new("L", (s, s), 0)
-    draw = ImageDraw.Draw(mask)
-    draw.rounded_rectangle(
-        [sx(330), sy(402), sx(596), sy(634)], radius=58 * k * u, fill=255
-    )
-
-    # Horn: sharp polygon whose corners are rounded via blur + threshold
-    horn = Image.new("L", (s, s), 0)
-    ImageDraw.Draw(horn).polygon(
-        [(sx(618), sy(480)), (sx(712), sy(412)), (sx(712), sy(624)), (sx(618), sy(556))],
-        fill=255,
-    )
-    horn = horn.filter(ImageFilter.GaussianBlur(int(18 * u))).point(
-        lambda v: 255 if v >= 128 else 0
-    )
-    mask.paste(255, (0, 0), horn)
-    return mask.resize((size, size), Image.LANCZOS)
+def load_master() -> Image.Image:
+    """Master logo cropped to its opaque content and squared to MASTER px."""
+    art = Image.open(MASTER_ART).convert("RGBA")
+    solid = art.getchannel("A").point(lambda v: 255 if v >= 128 else 0)
+    bbox = solid.getbbox()
+    if bbox is None:
+        raise SystemExit(f"{MASTER_ART} is fully transparent")
+    return art.crop(bbox).resize((MASTER, MASTER), Image.LANCZOS)
 
 
-def build_art(size: int = MASTER) -> Image.Image:
-    """Full-bleed square art (no corner rounding): gradient, bevel, shadowed glyph."""
-    art = gradient(size).convert("RGBA")
+def full_bleed(rounded: Image.Image) -> Image.Image:
+    """Opaque edge-to-edge art: zoom past the rounded corners and re-square.
 
-    # Subtle vertical bevel: lighter top edge, darker bottom edge
-    ramp = Image.new("L", (1, 256))
-    for y in range(256):
-        ramp.putpixel((0, y), y)
-    ramp = ramp.resize((size, size), Image.BILINEAR)
-    lighter = Image.alpha_composite(art, Image.new("RGBA", art.size, (255, 255, 255, 22)))
-    art = Image.composite(art, lighter, ramp)
-    darker = Image.alpha_composite(art, Image.new("RGBA", art.size, (0, 0, 0, 26)))
-    art = Image.composite(art, darker, ramp.point(lambda v: 255 - v))
-
-    # Glyph drop shadow, then the white glyph itself
-    glyph = glyph_mask(size)
-    shadow_alpha = Image.new("L", (size, size), 0)
-    shadow_alpha.paste(glyph, (0, int(size * 0.012)))
-    shadow_alpha = shadow_alpha.filter(ImageFilter.GaussianBlur(size * 0.022)).point(
-        lambda v: int(v * 0.30)
-    )
-    shadow = Image.new("RGBA", (size, size), (0, 0, 0, 0))
-    shadow.putalpha(shadow_alpha)
-    art = Image.alpha_composite(art, shadow)
-    art.paste(Image.new("RGBA", (size, size), (255, 255, 255, 255)), (0, 0), glyph)
-    return art
+    The largest axis-aligned square inside a rounded rect of radius r is
+    inset by r*(1 - 1/sqrt(2)) per side; cropping there leaves no
+    transparent corner pixels.
+    """
+    inset = round(MASTER * CORNER * (1 - 2 ** -0.5)) + 2  # +2 eats edge fringe
+    square = rounded.crop((inset, inset, MASTER - inset, MASTER - inset))
+    square = square.resize((MASTER, MASTER), Image.LANCZOS)
+    opaque = Image.new("RGBA", square.size, (255, 255, 255, 255))
+    opaque.alpha_composite(square)
+    return opaque
 
 
 def main() -> None:
-    square = build_art()  # opaque, edge-to-edge
-    rounded = square.copy()
-    rounded.putalpha(rounded_mask(MASTER, int(MASTER * CORNER)))
+    rounded = load_master()  # transparent rounded corners, as designed
+    square = full_bleed(rounded)  # opaque, edge-to-edge
 
     def scaled(img: Image.Image, size: int) -> Image.Image:
         return img.resize((size, size), Image.LANCZOS)
