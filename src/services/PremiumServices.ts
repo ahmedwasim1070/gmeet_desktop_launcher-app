@@ -19,8 +19,7 @@ const DEVELOPER_LICENSE: PremiumLicense = {
 const IS_DEV_PREMIUM =
 	import.meta.env.DEV && import.meta.env.VITE_APP_ENVIRONMENT === "DEVELOPMENT";
 
-// Plan copy with fallback prices — used when the Store can't answer
-// (dev builds, offline, unpackaged). Live Store prices override these.
+// Fallback Plans
 const FALLBACK_PLANS: PremiumPlan[] = [
 	{
 		planCode: "annual",

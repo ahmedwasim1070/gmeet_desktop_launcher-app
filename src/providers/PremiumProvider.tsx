@@ -1,7 +1,19 @@
 // Import
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+	createContext,
+	ReactNode,
+	useCallback,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+} from "react";
 import type { PremiumLicense, PremiumPlan, PremiumPlanCode } from "../types";
-import { fetchPremiumLicense, fetchPremiumPlans, purchasePremiumPlan } from "../services/PremiumServices";
+import {
+	fetchPremiumLicense,
+	fetchPremiumPlans,
+	purchasePremiumPlan,
+} from "../services/PremiumServices";
 
 // Interface
 interface PremiumProvidedProps {
@@ -21,10 +33,12 @@ interface PremiumProviderProps {
 }
 
 //
-const PremiumProviderContext = createContext<PremiumProvidedProps | undefined>(undefined);
+const PremiumProviderContext = createContext<PremiumProvidedProps | undefined>(
+	undefined,
+);
 
 //
-export default function PremiumProvider({children}:PremiumProviderProps) {
+export default function PremiumProvider({ children }: PremiumProviderProps) {
 	// Microsoft Store license (free tier until the Store answers)
 	const [license, setLicense] = useState<PremiumLicense>({
 		isPremium: false,
@@ -78,32 +92,45 @@ export default function PremiumProvider({children}:PremiumProviderProps) {
 	const closePremiumPopup = useCallback(() => setIsPremiumPopupOpen(false), []);
 
 	//
-	const values = useMemo(()=>({
-		license,
-		isPremium: license.isPremium,
-		isLicenseLoading,
-		plans,
-		arePlansLoading,
-		isPurchasing,
-		isPremiumPopupOpen,
-		openPremiumPopup,
-		closePremiumPopup,
-		purchase,
-	}),[license, isLicenseLoading, plans, arePlansLoading, isPurchasing, isPremiumPopupOpen, openPremiumPopup, closePremiumPopup, purchase])
+	const values = useMemo(
+		() => ({
+			license,
+			isPremium: license.isPremium,
+			isLicenseLoading,
+			plans,
+			arePlansLoading,
+			isPurchasing,
+			isPremiumPopupOpen,
+			openPremiumPopup,
+			closePremiumPopup,
+			purchase,
+		}),
+		[
+			license,
+			isLicenseLoading,
+			plans,
+			arePlansLoading,
+			isPurchasing,
+			isPremiumPopupOpen,
+			openPremiumPopup,
+			closePremiumPopup,
+			purchase,
+		],
+	);
 
-	return(
+	return (
 		<PremiumProviderContext.Provider value={values}>
 			{/*  */}
 			{children}
 		</PremiumProviderContext.Provider>
-	)
+	);
 }
 
 //
-export function UsePremium(){
+export function UsePremium() {
 	const context = useContext(PremiumProviderContext);
 	if (!context) {
 		throw new Error("UsePremium must be used inside <PremiumProvider>");
 	}
 	return context;
-};
+}
